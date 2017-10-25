@@ -14,7 +14,10 @@ class CustomAttributeMapperTest extends TestCase
      */
     public function testMap(AttributeValueSet $akeneoAttributes, CustomAttributeSet $expected, string $currency = null)
     {
-        $customAttributeMapper = CustomAttributeMapper::create($currency);
+        $customAttributeMapper = CustomAttributeMapper::create();
+        if ($currency !== null) {
+            $customAttributeMapper = $customAttributeMapper->withCurrency($currency);
+        }
         $actual = $customAttributeMapper->map($akeneoAttributes);
         self::assertTrue($expected->equals($actual));
     }
