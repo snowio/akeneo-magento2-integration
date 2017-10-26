@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace SnowIO\AkeneoMagento2Integration\Mapper;
 
 use SnowIO\AkeneoDataModel\ProductData as AkeneoProductData;
