@@ -29,11 +29,12 @@ class CustomAttributeMapper
         foreach ($akeneoAttributeValues as $attributeValue) {
             $value = $attributeValue->getValue();
 
-            if (null === $this->currency && $value instanceof PriceCollection) {
-                continue;
-            }
-
             if ($value instanceof PriceCollection) {
+                if (null === $this->currency)
+                {
+                    continue;
+                }
+
                 $value = $value->getAmount($this->currency);
             }
 
