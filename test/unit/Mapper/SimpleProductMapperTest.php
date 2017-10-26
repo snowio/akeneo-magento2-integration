@@ -17,7 +17,7 @@ class SimpleProductMapperTest extends TestCase
     public function testMap(AkeneoProduct $akeneoProduct, Magento2ProductData $expected, SimpleProductMapper $mapper)
     {
         $actual = $mapper->map($akeneoProduct);
-        self::assertTrue($actual->eqauls($expected));
+        self::assertTrue($actual->equals($expected));
     }
 
     public function mapDataProvider()
@@ -34,10 +34,6 @@ class SimpleProductMapperTest extends TestCase
                     'family' => "mens_t_shirts",
                     'attribute_values' => [
                         'size' => 'Large',
-                        'sku' => 'abc123',
-                        'status' => '1',
-                        'visibility' =>  '4',
-                        'url_key' => 'abc123',
                         'price' => [
                             'gbp' => '40.48',
                             'euro' => '40.59'
@@ -52,7 +48,6 @@ class SimpleProductMapperTest extends TestCase
                     CustomAttributeSet::of(
                         [
                             CustomAttribute::of('size', 'Large'),
-                            CustomAttribute::of('price', '40.48'),
                         ]
                     )
                 ),
@@ -69,7 +64,6 @@ class SimpleProductMapperTest extends TestCase
                     'family' => "mens_t_shirts",
                     'attribute_values' => [
                         'size' => 'Large',
-                        'sku' => 'abc123',
                         'price' => [
                             'gbp' => '40.48',
                             'euro' => '40.59'
@@ -83,6 +77,7 @@ class SimpleProductMapperTest extends TestCase
                 Magento2ProductData::of('abc123')
                     ->withCustomAttributes(CustomAttributeSet::of([
                         CustomAttribute::of('size', 'Large'),
+                        CustomAttribute::of('price', '40.48')
                     ])),
                 SimpleProductMapper::create()->withCustomAttributeMapper(CustomAttributeMapper::create()
                     ->withCurrency('gbp'))
