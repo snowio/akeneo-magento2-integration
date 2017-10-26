@@ -10,12 +10,16 @@ class SimpleProductMapper
     {
         $simpleProductMapper = new self;
         $simpleProductMapper->customAttributeMapper = CustomAttributeMapper::create();
+        $simpleProductMapper->customNameMapper = function (AkeneoProductData $productData) {
+            return $productData->getSku();
+        };
         return $simpleProductMapper;
     }
 
     public function map(AkeneoProductData $akeneoProduct): Magento2ProductData
     {
-        $magento2Product = Magento2ProductData::of($akeneoProduct->getSku());
+        $name = ($this->customNameMapper)($akeneoProduct);
+        $magento2Product = Magento2ProductData::of($akeneoProduct->getSku(), $name);
         $customAttributes = $this->customAttributeMapper->map($akeneoProduct->getAttributeValues());
         $magento2Product = $magento2Product->withCustomAttributes($customAttributes);
         return $magento2Product;
@@ -30,10 +34,16 @@ class SimpleProductMapper
 
     public function withCustomNameMapper(callable $fn): self
     {
+        $result = clone $this;
+        $result->customAttributeMapper = $fn;
+        return $result;
     }
 
     /** @var CustomAttributeMapper */
     private $customAttributeMapper;
+
+    /** @var callable */
+    private $customNameMapper;
 
     private function __construct()
     {
