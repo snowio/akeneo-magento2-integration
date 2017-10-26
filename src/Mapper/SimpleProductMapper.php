@@ -28,6 +28,10 @@ class SimpleProductMapper
         return $result;
     }
 
+    public function withCustomNameMapper(callable $fn): self
+    {
+    }
+
     /** @var CustomAttributeMapper */
     private $customAttributeMapper;
 
@@ -35,4 +39,5 @@ class SimpleProductMapper
     {
 
     }
+
 }

@@ -1,6 +1,8 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use SnowIO\AkeneoDataModel\AttributeValueIdentifier;
+use SnowIO\AkeneoDataModel\Scope;
 use SnowIO\AkeneoMagento2Integration\Mapper\CustomAttributeMapper;
 use SnowIO\AkeneoMagento2Integration\Mapper\SimpleProductMapper;
 use SnowIO\AkeneoDataModel\ProductData as AkeneoProduct;
@@ -44,7 +46,7 @@ class SimpleProductMapperTest extends TestCase
                     'enabled' => true,
                     '@timestamp' => 1508491122,
                 ]),
-                Magento2ProductData::of('abc123')->withCustomAttributes(
+                Magento2ProductData::of('abc123', 'abc123')->withCustomAttributes(
                     CustomAttributeSet::of(
                         [
                             CustomAttribute::of('size', 'Large'),
@@ -74,12 +76,50 @@ class SimpleProductMapperTest extends TestCase
                     'enabled' => true,
                     '@timestamp' => 1508491122,
                 ]),
-                Magento2ProductData::of('abc123')
+                Magento2ProductData::of('abc123', 'abc123')
                     ->withCustomAttributes(CustomAttributeSet::of([
                         CustomAttribute::of('size', 'Large'),
                         CustomAttribute::of('price', '40.48')
                     ])),
                 SimpleProductMapper::create()->withCustomAttributeMapper(CustomAttributeMapper::create()
+                    ->withCurrency('gbp'))
+            ],
+            'withCustomNameMapperSpecified' => [
+                AkeneoProduct::fromJson([
+                    'sku' => 'abc123',
+                    'channel' => 'main',
+                    'categories' => [
+                        ['mens', 't_shirts'],
+                        ['mens', 'trousers'],
+                    ],
+                    'family' => "mens_t_shirts",
+                    'attribute_values' => [
+                        'size' => 'Large',
+                        'product_title' => 'ABC 123 Product',
+                        'price' => [
+                            'gbp' => '40.48',
+                            'euro' => '40.59'
+                        ]
+                    ],
+                    'group' => null,
+                    'localizations' => [],
+                    'enabled' => true,
+                    '@timestamp' => 1508491122,
+                ]),
+                Magento2ProductData::of('abc123', 'ABC 123 Product')
+                    ->withCustomAttributes(CustomAttributeSet::of([
+                        CustomAttribute::of('size', 'Large'),
+                        CustomAttribute::of('price', '40.48'),
+                        CustomAttribute::of('product_title', 'ABC 123 Product')
+                    ])),
+                SimpleProductMapper::create()
+                    ->withCustomNameMapper(function (AkeneoProduct $productData) {
+                        $productTitle = $productData
+                            ->getAttributeValues()
+                            ->getValue(AttributeValueIdentifier::of('product_title', Scope::ofChannel('main')));
+                        return $productTitle;
+                    })
+                    ->withCustomAttributeMapper(CustomAttributeMapper::create()
                     ->withCurrency('gbp'))
             ],
         ];
