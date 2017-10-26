@@ -8,7 +8,7 @@ use SnowIO\AkeneoDataModel\PriceCollection;
 use SnowIO\Magento2DataModel\CustomAttribute;
 use SnowIO\Magento2DataModel\CustomAttributeSet;
 
-class CustomAttributeMapper
+final class CustomAttributeMapper
 {
 
     public static function create(): self

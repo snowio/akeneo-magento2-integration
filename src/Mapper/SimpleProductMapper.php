@@ -5,7 +5,7 @@ namespace SnowIO\AkeneoMagento2Integration\Mapper;
 use SnowIO\AkeneoDataModel\ProductData as AkeneoProductData;
 use SnowIO\Magento2DataModel\ProductData as Magento2ProductData;
 
-class SimpleProductMapper
+final class SimpleProductMapper
 {
     public static function create(): self
     {
