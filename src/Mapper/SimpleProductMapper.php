@@ -1,8 +1,8 @@
 <?php
 namespace SnowIO\AkeneoMagento2Integration\Mapper;
 
-use SnowIO\AkeneoDataModel\ProductData as AkeneoProduct;
-use SnowIO\Magento2DataModel\ProductData as Magento2Product;
+use SnowIO\AkeneoDataModel\ProductData as AkeneoProductData;
+use SnowIO\Magento2DataModel\ProductData as Magento2ProductData;
 
 class SimpleProductMapper
 {
@@ -13,9 +13,9 @@ class SimpleProductMapper
         return $simpleProductMapper;
     }
 
-    public function map(AkeneoProduct $akeneoProduct): Magento2Product
+    public function map(AkeneoProductData $akeneoProduct): Magento2ProductData
     {
-        $magento2Product = Magento2Product::of($akeneoProduct->getSku());
+        $magento2Product = Magento2ProductData::of($akeneoProduct->getSku());
         $customAttributes = $this->customAttributeMapper->map($akeneoProduct->getAttributeValues());
         $magento2Product = $magento2Product->withCustomAttributes($customAttributes);
         return $magento2Product;
