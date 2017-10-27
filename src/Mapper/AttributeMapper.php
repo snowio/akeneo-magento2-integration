@@ -43,7 +43,7 @@ final class AttributeMapper
             AttributeType::MULTISELECT => FrontendInput::MULTISELECT,
         ];
         return function (string $akeneoType) use ($typeToFrontendInputMap) {
-            return $typeToFrontendInputMap[$akeneoType] ?? 'text';
+            return $typeToFrontendInputMap[$akeneoType] ?? FrontendInput::TEXT;
         };
     }
 
