@@ -9,34 +9,35 @@ use SnowIO\Magento2DataModel\FrontendInput;
 
 final class AttributeMapper
 {
-    public static function create(): self
+    public static function create(string $defaultLocale): self
     {
         $attributeMapper = new self;
+        $attributeMapper->defaultLocale = $defaultLocale;
         return $attributeMapper;
     }
 
     public function map(AkeneoAttributeData $attributeData): Magento2AttributeData
     {
         $frontendInput = ($this->typeToFrontendInputMapper)($attributeData->getType());
-        $adminLabel = $attributeData->getLabel('en_GB');
-        return Magento2AttributeData::of($attributeData->getCode(), $frontendInput, $adminLabel);
+        $defaultFrontendLabel = $attributeData->getLabel($this->defaultLocale);
+        return Magento2AttributeData::of($attributeData->getCode(), $frontendInput, $defaultFrontendLabel);
     }
 
-    public function withTypeToFrontendInputMap(callable $fn): self
+    public function withTypeToFrontendInputMapper(callable $fn): self
     {
         $result = clone $this;
         $result->typeToFrontendInputMapper = $fn;
         return $result;
     }
 
-    public static function getDefaultTypeToFrontendInputMap(): callable
+    public static function getDefaultTypeToFrontendInputMapper(): callable
     {
         $typeToFrontendInputMap = [
             AttributeType::IDENTIFIER => FrontendInput::TEXT,
             AttributeType::SIMPLESELECT => FrontendInput::SELECT,
             AttributeType::BOOLEAN => FrontendInput::BOOLEAN,
             AttributeType::NUMBER => FrontendInput::TEXT,
-            AttributeType::PRICE_COLLECTION => FrontendInput::TEXT,
+            AttributeType::PRICE_COLLECTION => FrontendInput::PRICE,
             AttributeType::DATE => FrontendInput::DATE,
             AttributeType::TEXT => FrontendInput::TEXT,
             AttributeType::TEXTAREA => FrontendInput::TEXTAREA,
@@ -49,9 +50,10 @@ final class AttributeMapper
 
     /** @var callable */
     private $typeToFrontendInputMapper;
+    private $defaultLocale;
 
     private function __construct()
     {
-        $this->typeToFrontendInputMapper = self::getDefaultTypeToFrontendInputMap();
+        $this->typeToFrontendInputMapper = self::getDefaultTypeToFrontendInputMapper();
     }
 }

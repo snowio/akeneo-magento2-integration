@@ -38,7 +38,7 @@ class AttributeMapperTest extends TestCase
                     '@timestamp' => 1508491122,
                 ]),
                 Magento2AttributeData::of('size', FrontendInput::SELECT, 'Size'),
-                AttributeMapper::create()
+                AttributeMapper::create('en_GB')
             ]
         ];
     }
