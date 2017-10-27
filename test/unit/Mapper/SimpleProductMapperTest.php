@@ -2,8 +2,6 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use SnowIO\AkeneoDataModel\AttributeValueIdentifier;
-use SnowIO\AkeneoDataModel\Scope;
 use SnowIO\AkeneoMagento2Integration\Mapper\CustomAttributeMapper;
 use SnowIO\AkeneoMagento2Integration\Mapper\SimpleProductMapper;
 use SnowIO\AkeneoDataModel\ProductData as AkeneoProduct;
@@ -80,7 +78,8 @@ class SimpleProductMapperTest extends TestCase
                         CustomAttribute::of('size', 'Large'),
                         CustomAttribute::of('price', '40.48')
                     ])),
-                SimpleProductMapper::create()->withCustomAttributeMapper(CustomAttributeMapper::create()
+                SimpleProductMapper::create()
+                    ->withCustomAttributeMapper(CustomAttributeMapper::create()
                     ->withCurrency('gbp'))
             ],
             'withCustomNameMapperSpecified' => [
