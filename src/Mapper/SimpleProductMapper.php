@@ -4,6 +4,7 @@ namespace SnowIO\AkeneoMagento2Integration\Mapper;
 
 use SnowIO\AkeneoDataModel\ProductData as AkeneoProductData;
 use SnowIO\Magento2DataModel\ProductData as Magento2ProductData;
+use SnowIO\Magento2DataModel\ProductStatus;
 
 final class SimpleProductMapper
 {
@@ -11,19 +12,23 @@ final class SimpleProductMapper
     {
         $simpleProductMapper = new self;
         $simpleProductMapper->customAttributeMapper = CustomAttributeMapper::create();
-        $simpleProductMapper->customNameMapper = function (AkeneoProductData $productData) {
-            return $productData->getSku();
+        $simpleProductMapper->attributeSetCodeMapper = function (string $family = null) {
+            return $family;
         };
         return $simpleProductMapper;
     }
 
     public function map(AkeneoProductData $akeneoProduct): Magento2ProductData
     {
-        $name = ($this->customNameMapper)($akeneoProduct);
-        $magento2Product = Magento2ProductData::of($akeneoProduct->getSku(), $name);
+        $magento2Product = Magento2ProductData::of($akeneoProduct->getSku(), $akeneoProduct->getSku());
+        $attributeSetCode = ($this->attributeSetCodeMapper)($akeneoProduct->getProperties()->getFamily());
+        if ($attributeSetCode !== null) {
+            $magento2Product = $magento2Product->withAttributeSetCode($attributeSetCode);
+        }
+        $status = $akeneoProduct->getProperties()->getEnabled() ? ProductStatus::ENABLED : ProductStatus::DISABLED;
+        $magento2Product = $magento2Product->withStatus($status);
         $customAttributes = $this->customAttributeMapper->map($akeneoProduct->getAttributeValues());
-        $magento2Product = $magento2Product->withCustomAttributes($customAttributes);
-        return $magento2Product;
+        return $magento2Product->withCustomAttributes($customAttributes);
     }
 
     public function withCustomAttributeMapper(CustomAttributeMapper $customAttributeMapper): self
@@ -33,10 +38,10 @@ final class SimpleProductMapper
         return $result;
     }
 
-    public function withCustomNameMapper(callable $fn): self
+    public function withAttributeSetCodeMapper(callable $fn): self
     {
         $result = clone $this;
-        $result->customAttributeMapper = $fn;
+        $result->attributeSetCodeMapper = $fn;
         return $result;
     }
 
@@ -44,7 +49,7 @@ final class SimpleProductMapper
     private $customAttributeMapper;
 
     /** @var callable */
-    private $customNameMapper;
+    private $attributeSetCodeMapper;
 
     private function __construct()
     {

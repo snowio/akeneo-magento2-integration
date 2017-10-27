@@ -10,17 +10,9 @@ use SnowIO\Magento2DataModel\CustomAttributeSet;
 
 final class CustomAttributeMapper
 {
-
     public static function create(): self
     {
         return new self;
-    }
-
-    public function withCurrency(string $currency): self
-    {
-        $result = clone $this;
-        $result->currency = $currency;
-        return $result;
     }
 
     public function map(AttributeValueSet $akeneoAttributeValues): CustomAttributeSet
@@ -31,8 +23,7 @@ final class CustomAttributeMapper
             $value = $attributeValue->getValue();
 
             if ($value instanceof PriceCollection) {
-                if (null === $this->currency)
-                {
+                if (null === $this->currency) {
                     continue;
                 }
 
@@ -43,6 +34,13 @@ final class CustomAttributeMapper
         }
 
         return CustomAttributeSet::of($customAttributes);
+    }
+
+    public function withCurrency(string $currency): self
+    {
+        $result = clone $this;
+        $result->currency = $currency;
+        return $result;
     }
 
     private $currency;
