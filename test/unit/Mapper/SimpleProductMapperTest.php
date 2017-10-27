@@ -47,12 +47,9 @@ class SimpleProductMapperTest extends TestCase
                     'enabled' => true,
                     '@timestamp' => 1508491122,
                 ]),
-                Magento2ProductData::of('abc123', 'abc123')->withCustomAttributes(
-                    CustomAttributeSet::of(
-                        [
-                            CustomAttribute::of('size', 'Large'),
-                        ]
-                    )
+                Magento2ProductData::of('abc123', 'abc123')
+                    ->withAttributeSetCode('mens_t_shirts')
+                    ->withCustomAttributes(CustomAttributeSet::of([CustomAttribute::of('size', 'Large')])
                 ),
                 SimpleProductMapper::create(),
             ],
@@ -78,6 +75,7 @@ class SimpleProductMapperTest extends TestCase
                     '@timestamp' => 1508491122,
                 ]),
                 Magento2ProductData::of('abc123', 'abc123')
+                    ->withAttributeSetCode('mens_t_shirts')
                     ->withCustomAttributes(CustomAttributeSet::of([
                         CustomAttribute::of('size', 'Large'),
                         CustomAttribute::of('price', '40.48')
@@ -107,21 +105,18 @@ class SimpleProductMapperTest extends TestCase
                     'enabled' => true,
                     '@timestamp' => 1508491122,
                 ]),
-                Magento2ProductData::of('abc123', 'ABC 123 Product')
+                Magento2ProductData::of('abc123', 'abc123')
+                    ->withAttributeSetCode('mens_t_shirts_modified')
                     ->withCustomAttributes(CustomAttributeSet::of([
                         CustomAttribute::of('size', 'Large'),
                         CustomAttribute::of('price', '40.48'),
                         CustomAttribute::of('product_title', 'ABC 123 Product')
                     ])),
                 SimpleProductMapper::create()
-                    ->withCustomNameMapper(function (AkeneoProduct $productData) {
-                        $productTitle = $productData
-                            ->getAttributeValues()
-                            ->getValue(AttributeValueIdentifier::of('product_title', Scope::ofChannel('main')));
-                        return $productTitle;
+                    ->withAttributeSetCodeMapper(function (string $akeneoFamily = 'default') {
+                        return "{$akeneoFamily}_modified";
                     })
-                    ->withCustomAttributeMapper(CustomAttributeMapper::create()
-                    ->withCurrency('gbp'))
+                    ->withCustomAttributeMapper(CustomAttributeMapper::create()->withCurrency('gbp'))
             ],
         ];
     }
