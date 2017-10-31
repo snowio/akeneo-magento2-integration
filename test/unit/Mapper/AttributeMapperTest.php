@@ -10,36 +10,24 @@ use SnowIO\Magento2DataModel\FrontendInput;
 
 class AttributeMapperTest extends TestCase
 {
-
-    /**
-     * @dataProvider mapDataProvider
-     */
-    public function testMap(AkeneoAttributeData $akeneoAttributeData, Magento2AttributeData $expected, AttributeMapper $mapper)
+    public function testMap()
     {
+        $mapper = AttributeMapper::create('en_GB');
+        $akeneoAttributeData = AkeneoAttributeData::fromJson([
+            'code' => 'size',
+            'type' => AkeneoAttributeType::SIMPLESELECT,
+            'localizable' => true,
+            'scopable' => true,
+            'sort_order' => 34,
+            'labels' => [
+                'en_GB' => 'Size',
+                'fr_FR' => 'Taille',
+            ],
+            'group' => 'general',
+            '@timestamp' => 1508491122,
+        ]);
+        $expected = Magento2AttributeData::of('size', FrontendInput::SELECT, 'Size');
         $actual = $mapper->map($akeneoAttributeData);
         self::assertTrue($expected->equals($actual));
-    }
-
-    public function mapDataProvider()
-    {
-        return [
-            [
-                AkeneoAttributeData::fromJson([
-                    'code' => 'size',
-                    'type' => AkeneoAttributeType::SIMPLESELECT,
-                    'localizable' => true,
-                    'scopable' => true,
-                    'sort_order' => 34,
-                    'labels' => [
-                        'en_GB' => 'Size',
-                        'fr_FR' => 'Taille',
-                    ],
-                    'group' => 'general',
-                    '@timestamp' => 1508491122,
-                ]),
-                Magento2AttributeData::of('size', FrontendInput::SELECT, 'Size'),
-                AttributeMapper::create('en_GB')
-            ]
-        ];
     }
 }

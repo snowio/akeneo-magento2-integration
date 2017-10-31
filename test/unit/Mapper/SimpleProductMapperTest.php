@@ -12,111 +12,42 @@ use SnowIO\Magento2DataModel\ProductData as Magento2ProductData;
 class SimpleProductMapperTest extends TestCase
 {
 
-    /**
-     * @dataProvider mapDataProvider
-     */
-    public function testMap(AkeneoProduct $akeneoProduct, Magento2ProductData $expected, SimpleProductMapper $mapper)
+    public function testMap()
     {
+        $akeneoProduct = AkeneoProduct::fromJson([
+            'sku' => 'abc123',
+            'channel' => 'main',
+            'categories' => [
+                ['mens', 't_shirts'],
+                ['mens', 'trousers'],
+            ],
+            'family' => "mens_t_shirts",
+            'attribute_values' => [
+                'size' => 'Large',
+                'product_title' => 'ABC 123 Product',
+                'price' => [
+                    'gbp' => '40.48',
+                    'euro' => '40.59'
+                ]
+            ],
+            'group' => null,
+            'localizations' => [],
+            'enabled' => true,
+            '@timestamp' => 1508491122,
+        ]);
+        $mapper = SimpleProductMapper::create()
+            ->withAttributeSetCodeMapper(function (string $akeneoFamily = 'default') {
+                return "{$akeneoFamily}_modified";
+            })
+            ->withCustomAttributeMapper(CustomAttributeMapper::create()->withCurrency('gbp'));
         $actual = $mapper->map($akeneoProduct);
+        $expected = Magento2ProductData::of('abc123', 'abc123')
+            ->withAttributeSetCode('mens_t_shirts_modified')
+            ->withCustomAttributes(CustomAttributeSet::of([
+                CustomAttribute::of('size', 'Large'),
+                CustomAttribute::of('price', '40.48'),
+                CustomAttribute::of('product_title', 'ABC 123 Product')
+            ]));
         self::assertTrue($actual->equals($expected));
-    }
-
-    public function mapDataProvider()
-    {
-        return [
-            'withCustomAttributeMapperSpecified' => [
-                AkeneoProduct::fromJson([
-                    'sku' => 'abc123',
-                    'channel' => 'main',
-                    'categories' => [
-                        ['mens', 't_shirts'],
-                        ['mens', 'trousers'],
-                    ],
-                    'family' => "mens_t_shirts",
-                    'attribute_values' => [
-                        'size' => 'Large',
-                        'price' => [
-                            'gbp' => '40.48',
-                            'euro' => '40.59'
-                        ]
-                    ],
-                    'group' => null,
-                    'localizations' => [],
-                    'enabled' => true,
-                    '@timestamp' => 1508491122,
-                ]),
-                Magento2ProductData::of('abc123', 'abc123')
-                    ->withAttributeSetCode('mens_t_shirts')
-                    ->withCustomAttributes(CustomAttributeSet::of([CustomAttribute::of('size', 'Large')])
-                ),
-                SimpleProductMapper::create(),
-            ],
-            'withoutCustomAttributeMapperSpecified' => [
-                AkeneoProduct::fromJson([
-                    'sku' => 'abc123',
-                    'channel' => 'main',
-                    'categories' => [
-                        ['mens', 't_shirts'],
-                        ['mens', 'trousers'],
-                    ],
-                    'family' => "mens_t_shirts",
-                    'attribute_values' => [
-                        'size' => 'Large',
-                        'price' => [
-                            'gbp' => '40.48',
-                            'euro' => '40.59'
-                        ]
-                    ],
-                    'group' => null,
-                    'localizations' => [],
-                    'enabled' => true,
-                    '@timestamp' => 1508491122,
-                ]),
-                Magento2ProductData::of('abc123', 'abc123')
-                    ->withAttributeSetCode('mens_t_shirts')
-                    ->withCustomAttributes(CustomAttributeSet::of([
-                        CustomAttribute::of('size', 'Large'),
-                        CustomAttribute::of('price', '40.48')
-                    ])),
-                SimpleProductMapper::create()
-                    ->withCustomAttributeMapper(CustomAttributeMapper::create()
-                    ->withCurrency('gbp'))
-            ],
-            'withCustomNameMapperSpecified' => [
-                AkeneoProduct::fromJson([
-                    'sku' => 'abc123',
-                    'channel' => 'main',
-                    'categories' => [
-                        ['mens', 't_shirts'],
-                        ['mens', 'trousers'],
-                    ],
-                    'family' => "mens_t_shirts",
-                    'attribute_values' => [
-                        'size' => 'Large',
-                        'product_title' => 'ABC 123 Product',
-                        'price' => [
-                            'gbp' => '40.48',
-                            'euro' => '40.59'
-                        ]
-                    ],
-                    'group' => null,
-                    'localizations' => [],
-                    'enabled' => true,
-                    '@timestamp' => 1508491122,
-                ]),
-                Magento2ProductData::of('abc123', 'abc123')
-                    ->withAttributeSetCode('mens_t_shirts_modified')
-                    ->withCustomAttributes(CustomAttributeSet::of([
-                        CustomAttribute::of('size', 'Large'),
-                        CustomAttribute::of('price', '40.48'),
-                        CustomAttribute::of('product_title', 'ABC 123 Product')
-                    ])),
-                SimpleProductMapper::create()
-                    ->withAttributeSetCodeMapper(function (string $akeneoFamily = 'default') {
-                        return "{$akeneoFamily}_modified";
-                    })
-                    ->withCustomAttributeMapper(CustomAttributeMapper::create()->withCurrency('gbp'))
-            ],
-        ];
     }
 }

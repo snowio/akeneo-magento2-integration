@@ -11,7 +11,7 @@ use SnowIO\Magento2DataModel\AttributeOption as Magento2AttributeOption;
 class AttributeOptionMapperTest extends TestCase
 {
 
-    public function testMapper()
+    public function testMap()
     {
         $input = AkeneoAttributeOption::of(AttributeOptionIdentifier::of('size', 'large'))
             ->withLabel(LocalizedString::of('Large', 'en_GB'));
