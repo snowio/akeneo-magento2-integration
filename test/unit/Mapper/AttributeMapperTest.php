@@ -12,7 +12,9 @@ class AttributeMapperTest extends TestCase
 {
     public function testMap()
     {
-        $mapper = AttributeMapper::create('en_GB');
+        $mapper = AttributeMapper::create('en_GB')->withTypeToFrontendInputMapper(function () {
+            return FrontendInput::MULTISELECT;
+        });
         $akeneoAttributeData = AkeneoAttributeData::fromJson([
             'code' => 'size',
             'type' => AkeneoAttributeType::SIMPLESELECT,
@@ -26,7 +28,7 @@ class AttributeMapperTest extends TestCase
             'group' => 'general',
             '@timestamp' => 1508491122,
         ]);
-        $expected = Magento2AttributeData::of('size', FrontendInput::SELECT, 'Size');
+        $expected = Magento2AttributeData::of('size', FrontendInput::MULTISELECT, 'Size');
         $actual = $mapper->map($akeneoAttributeData);
         self::assertTrue($expected->equals($actual));
     }
