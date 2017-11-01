@@ -9,7 +9,7 @@
         }
     },
     "require": {
-        "snowio/akeneo-data-model": "dev-master",
+        "snowio/akeneo-data-model": "^0.1.7",
         "snowio/magento2-data-model": "^0.1"
     }
 }
