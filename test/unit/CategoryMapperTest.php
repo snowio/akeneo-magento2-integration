@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use SnowIO\AkeneoDataModel\CategoryData as AkeneoCategoryData;
 use SnowIO\AkeneoDataModel\CategoryPath;
 use SnowIO\AkeneoDataModel\LocalizedString;
-use SnowIO\AkeneoMagento2Integration\CategoryMapper;
+use SnowIO\AkeneoMagento2\CategoryMapper;
 use SnowIO\Magento2DataModel\CategoryData as Magento2CategoryData;
 
 class CategoryMapperTest extends TestCase

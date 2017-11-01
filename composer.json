@@ -5,7 +5,7 @@
     },
     "autoload": {
         "psr-4": {
-            "SnowIO\\AkeneoMagento2Integration\\": "src"
+            "SnowIO\\AkeneoMagento2\\": "src"
         }
     },
     "require": {

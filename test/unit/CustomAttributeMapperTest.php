@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use SnowIO\AkeneoDataModel\AttributeValueSet;
-use SnowIO\AkeneoMagento2Integration\CustomAttributeMapper;
+use SnowIO\AkeneoMagento2\CustomAttributeMapper;
 use SnowIO\Magento2DataModel\CustomAttribute;
 use SnowIO\Magento2DataModel\CustomAttributeSet;
 

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace SnowIO\AkeneoMagento2Integration;
+namespace SnowIO\AkeneoMagento2;
 
 use SnowIO\Magento2DataModel\AttributeOption as Magento2AttributeOption;
 use SnowIO\AkeneoDataModel\AttributeOption as AkeneoAttributeOption;

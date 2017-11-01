@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 
 use SnowIO\AkeneoDataModel\AttributeData as AkeneoAttributeData;
 use SnowIO\AkeneoDataModel\AttributeType as AkeneoAttributeType;
-use SnowIO\AkeneoMagento2Integration\AttributeMapper;
+use SnowIO\AkeneoMagento2\AttributeMapper;
 use SnowIO\Magento2DataModel\AttributeData as Magento2AttributeData;
 use SnowIO\Magento2DataModel\FrontendInput;
 

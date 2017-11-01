@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 use SnowIO\AkeneoDataModel\AttributeOption as AkeneoAttributeOption;
 use SnowIO\AkeneoDataModel\AttributeOptionIdentifier;
 use SnowIO\AkeneoDataModel\LocalizedString;
-use SnowIO\AkeneoMagento2Integration\AttributeOptionMapper;
+use SnowIO\AkeneoMagento2\AttributeOptionMapper;
 use SnowIO\Magento2DataModel\AttributeOption as Magento2AttributeOption;
 
 class AttributeOptionMapperTest extends TestCase
