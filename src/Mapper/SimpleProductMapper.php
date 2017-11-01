@@ -10,12 +10,7 @@ final class SimpleProductMapper
 {
     public static function create(): self
     {
-        $simpleProductMapper = new self;
-        $simpleProductMapper->customAttributeMapper = CustomAttributeMapper::create();
-        $simpleProductMapper->attributeSetCodeMapper = function (string $family = null) {
-            return $family;
-        };
-        return $simpleProductMapper;
+        return new self;
     }
 
     public function map(AkeneoProductData $akeneoProduct): Magento2ProductData
@@ -53,6 +48,9 @@ final class SimpleProductMapper
 
     private function __construct()
     {
-
+        $this->customAttributeMapper = CustomAttributeMapper::create();
+        $this->attributeSetCodeMapper = function (string $family = null) {
+            return $family;
+        };
     }
 }
