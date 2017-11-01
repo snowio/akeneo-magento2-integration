@@ -1,7 +1,7 @@
 <phpunit bootstrap="./vendor/autoload.php">
     <testsuites>
         <testsuite name="snow-akeneo-magento2-integration">
-            <directory>./test/unit/Mapper</directory>
+            <directory>./test/unit</directory>
         </testsuite>
     </testsuites>
     <filter>

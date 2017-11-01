@@ -2,8 +2,8 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use SnowIO\AkeneoMagento2Integration\Mapper\CustomAttributeMapper;
-use SnowIO\AkeneoMagento2Integration\Mapper\SimpleProductMapper;
+use SnowIO\AkeneoMagento2Integration\CustomAttributeMapper;
+use SnowIO\AkeneoMagento2Integration\SimpleProductMapper;
 use SnowIO\AkeneoDataModel\ProductData as AkeneoProduct;
 use SnowIO\Magento2DataModel\CustomAttribute;
 use SnowIO\Magento2DataModel\CustomAttributeSet;
