@@ -9,8 +9,7 @@ final class AttributeOptionMapper
 {
     public static function create(string $defaultLocale): self
     {
-        $attributeOptionMapper = new self($defaultLocale);
-        return $attributeOptionMapper;
+        return new self($defaultLocale);
     }
 
     public function map(AkeneoAttributeOption $attributeOption): Magento2AttributeOption

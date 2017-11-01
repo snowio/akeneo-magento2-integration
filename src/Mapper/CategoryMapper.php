@@ -9,8 +9,7 @@ final class CategoryMapper
 {
     public static function create(string $defaultLocale): self
     {
-        $categoryMapper = new self($defaultLocale);
-        return $categoryMapper;
+        return new self($defaultLocale);
     }
 
     public function map(AkeneoCategoryData $categoryData): Magento2CategoryData
