@@ -16,7 +16,7 @@ final class AttributeMapper
         return $attributeMapper;
     }
 
-    public function map(AkeneoAttributeData $attributeData): Magento2AttributeData
+    public function __invoke(AkeneoAttributeData $attributeData): Magento2AttributeData
     {
         $frontendInput = ($this->typeToFrontendInputMapper)($attributeData->getType());
         $defaultFrontendLabel = $attributeData->getLabel($this->defaultLocale);

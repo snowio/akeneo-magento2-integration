@@ -33,7 +33,7 @@ class CustomAttributeMapperTest extends TestCase
             CustomAttribute::of('price', '37.45'),
             CustomAttribute::of('weight', '30'),
         ]);
-        $actual = $customAttributeMapper->map($this->akeneoAttributes);
+        $actual = $customAttributeMapper($this->akeneoAttributes);
         self::assertTrue($expected->equals($actual));
     }
 
@@ -44,7 +44,7 @@ class CustomAttributeMapperTest extends TestCase
             CustomAttribute::of('size', 'Large'),
             CustomAttribute::of('weight', '30'),
         ]);
-        $actual = $customAttributeMapper->map($this->akeneoAttributes);
+        $actual = $customAttributeMapper($this->akeneoAttributes);
         self::assertTrue($expected->equals($actual));
     }
 }

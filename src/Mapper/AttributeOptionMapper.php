@@ -12,7 +12,7 @@ final class AttributeOptionMapper
         return new self($defaultLocale);
     }
 
-    public function map(AkeneoAttributeOption $attributeOption): Magento2AttributeOption
+    public function __invoke(AkeneoAttributeOption $attributeOption): Magento2AttributeOption
     {
         return Magento2AttributeOption::of(
             $attributeOption->getAttributeCode(),

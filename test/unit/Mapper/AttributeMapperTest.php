@@ -29,7 +29,7 @@ class AttributeMapperTest extends TestCase
             '@timestamp' => 1508491122,
         ]);
         $expected = Magento2AttributeData::of('size', FrontendInput::MULTISELECT, 'Size');
-        $actual = $mapper->map($akeneoAttributeData);
+        $actual = $mapper($akeneoAttributeData);
         self::assertTrue($expected->equals($actual));
     }
 }

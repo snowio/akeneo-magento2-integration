@@ -12,7 +12,7 @@ final class CategoryMapper
         return new self($defaultLocale);
     }
 
-    public function map(AkeneoCategoryData $categoryData): Magento2CategoryData
+    public function __invoke(AkeneoCategoryData $categoryData): Magento2CategoryData
     {
         $code = $categoryData->getCode();
         $name = $categoryData->getLabel($this->defaultLocale);

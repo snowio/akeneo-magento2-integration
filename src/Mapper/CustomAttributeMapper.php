@@ -15,7 +15,7 @@ final class CustomAttributeMapper
         return new self;
     }
 
-    public function map(AttributeValueSet $akeneoAttributeValues): CustomAttributeSet
+    public function __invoke(AttributeValueSet $akeneoAttributeValues): CustomAttributeSet
     {
         $customAttributes = [];
         /** @var AttributeValue $attributeValue */

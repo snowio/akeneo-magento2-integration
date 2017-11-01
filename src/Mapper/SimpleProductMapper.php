@@ -13,7 +13,7 @@ final class SimpleProductMapper
         return new self;
     }
 
-    public function map(AkeneoProductData $akeneoProduct): Magento2ProductData
+    public function __invoke(AkeneoProductData $akeneoProduct): Magento2ProductData
     {
         $magento2Product = Magento2ProductData::of($akeneoProduct->getSku(), $akeneoProduct->getSku());
         $attributeSetCode = ($this->attributeSetCodeMapper)($akeneoProduct->getProperties()->getFamily());
@@ -22,11 +22,11 @@ final class SimpleProductMapper
         }
         $status = $akeneoProduct->getProperties()->getEnabled() ? ProductStatus::ENABLED : ProductStatus::DISABLED;
         $magento2Product = $magento2Product->withStatus($status);
-        $customAttributes = $this->customAttributeMapper->map($akeneoProduct->getAttributeValues());
+        $customAttributes = ($this->customAttributeMapper)($akeneoProduct->getAttributeValues());
         return $magento2Product->withCustomAttributes($customAttributes);
     }
 
-    public function withCustomAttributeMapper(CustomAttributeMapper $customAttributeMapper): self
+    public function withCustomAttributeMapper(callable $customAttributeMapper): self
     {
         $result = clone $this;
         $result->customAttributeMapper = $customAttributeMapper;

@@ -17,7 +17,7 @@ class CategoryMapperTest extends TestCase
         $expected = Magento2CategoryData::of('t_shirts', 'Mens T-Shirts')
             ->withParentCode('mens');
         $mapper = CategoryMapper::create('en_GB');
-        $actual = $mapper->map($akeneoCategoryData);
+        $actual = $mapper($akeneoCategoryData);
         self::assertTrue($expected->equals($actual));
     }
 

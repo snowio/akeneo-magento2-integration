@@ -15,7 +15,7 @@ class SimpleProductMapperTest extends TestCase
     {
         $akeneoProduct = $this->getAkeneoProduct();
         $mapper = SimpleProductMapper::create();
-        $actual = $mapper->map($akeneoProduct);
+        $actual = $mapper($akeneoProduct);
         $expected = Magento2ProductData::of('abc123', 'abc123')
             ->withAttributeSetCode('mens_t_shirts')
             ->withCustomAttributes(CustomAttributeSet::of([
@@ -33,7 +33,7 @@ class SimpleProductMapperTest extends TestCase
                 return "{$akeneoFamily}_modified";
             })
             ->withCustomAttributeMapper(CustomAttributeMapper::create()->withCurrency('gbp'));
-        $actual = $mapper->map($akeneoProduct);
+        $actual = $mapper($akeneoProduct);
         $expected = Magento2ProductData::of('abc123', 'abc123')
             ->withAttributeSetCode('mens_t_shirts_modified')
             ->withCustomAttributes(CustomAttributeSet::of([
