@@ -17,6 +17,10 @@ final class CustomAttributeMapper
 
     public function __invoke(AttributeValueSet $akeneoAttributeValues): CustomAttributeSet
     {
+        foreach ($this->inputFilters as $inputFilter) {
+            $akeneoAttributeValues = $akeneoAttributeValues->filter($inputFilter);
+        }
+
         $customAttributes = [];
         /** @var AttributeValue $attributeValue */
         foreach ($akeneoAttributeValues as $attributeValue) {
@@ -33,6 +37,10 @@ final class CustomAttributeMapper
             $customAttributes[] = CustomAttribute::of($attributeValue->getAttributeCode(), $value);
         }
 
+        foreach ($this->outputFilters as $outputFilter) {
+            $customAttributes = \array_filter($customAttributes, $outputFilter);
+        }
+
         return CustomAttributeSet::of($customAttributes);
     }
 
@@ -43,6 +51,22 @@ final class CustomAttributeMapper
         return $result;
     }
 
+    public function withInputFilter(callable $predicate): self
+    {
+        $result = clone $this;
+        $result->inputFilters[] = $predicate;
+        return $result;
+    }
+
+    public function withOutputFilter(callable $predicate): self
+    {
+        $result = clone $this;
+        $result->outputFilters[] = $predicate;
+        return $result;
+    }
+
+    private $inputFilters = [];
+    private $outputFilters = [];
     private $currency;
 
     private function __construct()
