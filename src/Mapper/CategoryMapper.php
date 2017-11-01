@@ -20,7 +20,7 @@ final class CategoryMapper
         $parent = $categoryData->getParent();
         $category = Magento2CategoryData::of($code, $name);
         if ($parent !== null) {
-            $category = $category->withParent($parent);
+            $category = $category->withParentCode($parent);
         }
         return $category;
     }

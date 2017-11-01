@@ -10,6 +10,6 @@
     },
     "require": {
         "snowio/akeneo-data-model": "dev-master",
-        "snowio/magento2-data-model": "dev-master"
+        "snowio/magento2-data-model": "^0.1"
     }
 }
