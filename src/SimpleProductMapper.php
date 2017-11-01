@@ -6,18 +6,15 @@ use SnowIO\AkeneoDataModel\ProductData as AkeneoProductData;
 use SnowIO\Magento2DataModel\ProductData as Magento2ProductData;
 use SnowIO\Magento2DataModel\ProductStatus;
 
-final class SimpleProductMapper extends Mapper
+final class SimpleProductMapper
 {
     public static function create(): self
     {
         return new self;
     }
 
-    public function __invoke(AkeneoProductData $akeneoProduct): ?Magento2ProductData
+    public function __invoke(AkeneoProductData $akeneoProduct): Magento2ProductData
     {
-        if ($this->inputIsIgnored($akeneoProduct)) {
-            return null;
-        }
         $magento2Product = Magento2ProductData::of($akeneoProduct->getSku(), $akeneoProduct->getSku());
         $attributeSetCode = ($this->attributeSetCodeMapper)($akeneoProduct->getProperties()->getFamily());
         if ($attributeSetCode !== null) {
@@ -26,8 +23,7 @@ final class SimpleProductMapper extends Mapper
         $status = $akeneoProduct->getProperties()->getEnabled() ? ProductStatus::ENABLED : ProductStatus::DISABLED;
         $magento2Product = $magento2Product->withStatus($status);
         $customAttributes = ($this->customAttributeMapper)($akeneoProduct->getAttributeValues());
-        $magento2Product = $magento2Product->withCustomAttributes($customAttributes);
-        return $this->filterOutput($magento2Product);
+        return $magento2Product->withCustomAttributes($customAttributes);
     }
 
     public function withCustomAttributeMapper(callable $customAttributeMapper): self

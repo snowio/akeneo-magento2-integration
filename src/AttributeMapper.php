@@ -7,7 +7,7 @@ use SnowIO\AkeneoDataModel\AttributeType;
 use SnowIO\Magento2DataModel\AttributeData as Magento2AttributeData;
 use SnowIO\Magento2DataModel\FrontendInput;
 
-final class AttributeMapper extends Mapper
+final class AttributeMapper
 {
     public static function create(string $defaultLocale): self
     {
@@ -16,15 +16,11 @@ final class AttributeMapper extends Mapper
         return $attributeMapper;
     }
 
-    public function __invoke(AkeneoAttributeData $akeneoAttributeData): ?Magento2AttributeData
+    public function __invoke(AkeneoAttributeData $attributeData): Magento2AttributeData
     {
-        if ($this->inputIsIgnored($akeneoAttributeData)) {
-            return null;
-        }
-        $frontendInput = ($this->typeToFrontendInputMapper)($akeneoAttributeData->getType());
-        $defaultFrontendLabel = $akeneoAttributeData->getLabel($this->defaultLocale);
-        $magentoAttributeData = Magento2AttributeData::of($akeneoAttributeData->getCode(), $frontendInput, $defaultFrontendLabel);
-        return $this->filterOutput($magentoAttributeData);
+        $frontendInput = ($this->typeToFrontendInputMapper)($attributeData->getType());
+        $defaultFrontendLabel = $attributeData->getLabel($this->defaultLocale);
+        return Magento2AttributeData::of($attributeData->getCode(), $frontendInput, $defaultFrontendLabel);
     }
 
     public function withTypeToFrontendInputMapper(callable $fn): self
