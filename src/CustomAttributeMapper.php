@@ -8,7 +8,7 @@ use SnowIO\AkeneoDataModel\PriceCollection;
 use SnowIO\Magento2DataModel\CustomAttribute;
 use SnowIO\Magento2DataModel\CustomAttributeSet;
 
-final class CustomAttributeMapper
+final class CustomAttributeMapper extends Mapper
 {
     public static function create(): self
     {
@@ -17,9 +17,7 @@ final class CustomAttributeMapper
 
     public function __invoke(AttributeValueSet $akeneoAttributeValues): CustomAttributeSet
     {
-        foreach ($this->inputFilters as $inputFilter) {
-            $akeneoAttributeValues = $akeneoAttributeValues->filter($inputFilter);
-        }
+        $akeneoAttributeValues = $this->filterInputSet($akeneoAttributeValues);
 
         $customAttributes = [];
         /** @var AttributeValue $attributeValue */
@@ -37,11 +35,7 @@ final class CustomAttributeMapper
             $customAttributes[] = CustomAttribute::of($attributeValue->getAttributeCode(), $value);
         }
 
-        foreach ($this->outputFilters as $outputFilter) {
-            $customAttributes = \array_filter($customAttributes, $outputFilter);
-        }
-
-        return CustomAttributeSet::of($customAttributes);
+        return $this->filterOutputSet(CustomAttributeSet::of($customAttributes));
     }
 
     public function withCurrency(string $currency): self
@@ -51,22 +45,6 @@ final class CustomAttributeMapper
         return $result;
     }
 
-    public function withInputFilter(callable $predicate): self
-    {
-        $result = clone $this;
-        $result->inputFilters[] = $predicate;
-        return $result;
-    }
-
-    public function withOutputFilter(callable $predicate): self
-    {
-        $result = clone $this;
-        $result->outputFilters[] = $predicate;
-        return $result;
-    }
-
-    private $inputFilters = [];
-    private $outputFilters = [];
     private $currency;
 
     private function __construct()
