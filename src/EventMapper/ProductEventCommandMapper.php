@@ -22,10 +22,7 @@ final class ProductEventCommandMapper
         /** @var ProductDataSet $currentM2ProductsData */
         $currentM2ProductsData = $mapper($event->getCurrentProductData());
         /** @var ProductDataSet $previousM2ProductsData */
-        $previousM2ProductsData = ProductDataSet::create();
-        if ($event->getPreviousProductData() !== null) {
-            $previousM2ProductsData = $mapper($event->getPreviousProductData());
-        }
+        $previousM2ProductsData = $mapper($event->getPreviousProductData());
         /** @var ProductDataSet $changedProducts */
         $changedProducts = $currentM2ProductsData->diff($previousM2ProductsData);
         foreach ($changedProducts as $changedProduct) {
@@ -36,13 +33,13 @@ final class ProductEventCommandMapper
     public function getDeleteCommands(array $eventJson): \Iterator {
         $event = ProductSavedEvent::fromJson($eventJson);
         $mapper = $this->configuration->getProductMapper();
-        /** @var ProductDataSet $currentFhProductsData */
-        $currentFhProductsData = $mapper($event->getCurrentProductData());
-        /** @var ProductDataSet $previousFhProductsData */
-        $previousFhProductsData = $mapper($event->getPreviousProductData());
+        /** @var ProductDataSet $currentM2ProductsData */
+        $currentM2ProductsData = $mapper($event->getCurrentProductData());
+        /** @var ProductDataSet $previousM2ProductsData */
+        $previousM2ProductsData = $mapper($event->getPreviousProductData());
         /** @var ProductDataSet $removedProducts */
-        $removedProducts = $previousFhProductsData
-            ->diffByKey($currentFhProductsData)
+        $removedProducts = $previousM2ProductsData
+            ->diffByKey($currentM2ProductsData)
             ->filter(function (ProductData $magentoProductData) {
                 return $magentoProductData->getStoreCode() === 'admin';
             });
