@@ -4,6 +4,7 @@ namespace SnowIO\AkeneoMagento2;
 
 use SnowIO\AkeneoDataModel\ProductData as AkeneoProductData;
 use SnowIO\Magento2DataModel\ProductData as Magento2ProductData;
+use SnowIO\Magento2DataModel\ProductDataSet;
 use SnowIO\Magento2DataModel\ProductStatus;
 use SnowIO\Magento2DataModel\ProductVisibility;
 
@@ -14,7 +15,7 @@ final class SimpleProductMapper
         return new self;
     }
 
-    public function __invoke(AkeneoProductData $akeneoProduct): Magento2ProductData
+    public function __invoke(AkeneoProductData $akeneoProduct): ProductDataSet
     {
         $magento2Product = Magento2ProductData::of($akeneoProduct->getSku(), $akeneoProduct->getSku());
         $attributeSetCode = ($this->attributeSetCodeMapper)($akeneoProduct->getProperties()->getFamily());
@@ -24,10 +25,10 @@ final class SimpleProductMapper
         $status = $akeneoProduct->getProperties()->getEnabled() ? ProductStatus::ENABLED : ProductStatus::DISABLED;
         $visibility = $akeneoProduct->getProperties()->getVariantGroup() ? ProductVisibility::NOT_VISIBLE_INDIVIDUALLY : ProductVisibility::CATALOG_SEARCH;
         $customAttributes = ($this->customAttributeMapper)($akeneoProduct->getAttributeValues());
-        return $magento2Product
+        return ProductDataSet::of([$magento2Product
             ->withStatus($status)
             ->withVisibility($visibility)
-            ->withCustomAttributes($customAttributes);
+            ->withCustomAttributes($customAttributes)]);
     }
 
     public function withCustomAttributeMapper(callable $customAttributeMapper): self
