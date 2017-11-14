@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace SnowIO\AkeneoMagento2\Test;
+
 use PHPUnit\Framework\TestCase;
 use SnowIO\AkeneoDataModel\AttributeValueSet;
 use SnowIO\AkeneoMagento2\CustomAttributeMapper;

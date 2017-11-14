@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace SnowIO\AkeneoMagento2\Test;
+
 use PHPUnit\Framework\TestCase;
 use SnowIO\AkeneoDataModel\AttributeOption as AkeneoAttributeOption;
 use SnowIO\AkeneoDataModel\AttributeOptionIdentifier;
@@ -10,7 +12,6 @@ use SnowIO\Magento2DataModel\AttributeOption as Magento2AttributeOption;
 
 class AttributeOptionMapperTest extends TestCase
 {
-
     public function testMap()
     {
         $input = AkeneoAttributeOption::of(AttributeOptionIdentifier::of('size', 'large'))
