@@ -34,7 +34,9 @@ final class CustomAttributeMapper
                 $value = $value->getAmount($this->currency);
             }
 
-            $customAttributes[] = CustomAttribute::of($attributeValue->getAttributeCode(), $value);
+            $attributeCode = ($this->attributeCodeMapper)($attributeValue->getAttributeCode());
+
+            $customAttributes[] = CustomAttribute::of($attributeCode, $value);
         }
 
         foreach ($this->outputFilters as $outputFilter) {
@@ -65,12 +67,22 @@ final class CustomAttributeMapper
         return $result;
     }
 
+    public function withAttributeCodeMapper(callable $attributeCodeMapper): self
+    {
+        $result = clone $this;
+        $result->attributeCodeMapper = $attributeCodeMapper;
+        return $result;
+    }
+
     private $inputFilters = [];
     private $outputFilters = [];
     private $currency;
+    private $attributeCodeMapper;
 
     private function __construct()
     {
-
+        $this->attributeCodeMapper = function (string $attributeCode) {
+            return $attributeCode;
+        };
     }
 }
