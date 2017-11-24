@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace SnowIO\AkeneoMagento2\Test\EventMapper;
 
-use SnowIO\AkeneoMagento2\EventMapper\ProductCategoryAssociationEventCommandMapper;
+use SnowIO\AkeneoMagento2\MessageMapper\ProductCategoryAssociationEventCommandMapper;
 use SnowIO\Magento2DataModel\Command\SaveProductCategoryAssociationCommand;
 use SnowIO\Magento2DataModel\ProductCategoryAssociation;
 

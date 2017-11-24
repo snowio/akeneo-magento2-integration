@@ -1,11 +1,10 @@
 {
     "name": "snowio/akeneo-magento2-integration",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/alexanderwanyoike/akeneo-data-model"
-        }
-    ],
+    "require": {
+        "snowio/akeneo-data-model": "dev-master",
+        "snowio/magento2-data-model": "dev-master",
+        "joshdifabio/transform": "dev-master"
+    },
     "require-dev": {
         "phpunit/phpunit": "^6.4"
     },
@@ -18,9 +17,5 @@
         "psr-4": {
             "SnowIO\\AkeneoMagento2\\Test\\": "test/unit"
         }
-    },
-    "require": {
-        "snowio/akeneo-data-model": "dev-master",
-        "snowio/magento2-data-model": "dev-master"
     }
 }

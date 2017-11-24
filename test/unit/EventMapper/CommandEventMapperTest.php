@@ -6,9 +6,9 @@ use PHPUnit\Framework\TestCase;
 use SnowIO\AkeneoMagento2\AttributeMapper;
 use SnowIO\AkeneoMagento2\AttributeOptionMapper;
 use SnowIO\AkeneoMagento2\CategoryMapper;
-use SnowIO\AkeneoMagento2\EventMapper\MagentoConfiguration;
+use SnowIO\AkeneoMagento2\MessageMapper\MagentoConfiguration;
 use SnowIO\AkeneoMagento2\ProductCategoryAssociationMapper;
-use SnowIO\AkeneoMagento2\SimpleProductMapper;
+use SnowIO\AkeneoMagento2\ProductMapper;
 use SnowIO\Magento2DataModel\ProductCategoryAssociation;
 
 abstract class CommandEventMapperTest extends TestCase
@@ -34,7 +34,7 @@ abstract class CommandEventMapperTest extends TestCase
 
             public function getProductMapper(): callable
             {
-                return SimpleProductMapper::create();
+                return ProductMapper::create();
             }
 
             public function getProductCategoryAssociationMapper(): callable

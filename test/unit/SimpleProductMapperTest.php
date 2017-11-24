@@ -5,7 +5,7 @@ namespace SnowIO\AkeneoMagento2\Test;
 
 use PHPUnit\Framework\TestCase;
 use SnowIO\AkeneoMagento2\CustomAttributeMapper;
-use SnowIO\AkeneoMagento2\SimpleProductMapper;
+use SnowIO\AkeneoMagento2\ProductMapper;
 use SnowIO\AkeneoDataModel\ProductData as AkeneoProduct;
 use SnowIO\Magento2DataModel\CustomAttribute;
 use SnowIO\Magento2DataModel\CustomAttributeSet;
@@ -17,7 +17,7 @@ class SimpleProductMapperTest extends TestCase
     public function testMap()
     {
         $akeneoProduct = $this->getAkeneoProduct();
-        $mapper = SimpleProductMapper::create();
+        $mapper = ProductMapper::create();
         $actual = $mapper($akeneoProduct);
         $expected = ProductDataSet::of([
             Magento2ProductData::of('abc123', 'abc123')
@@ -33,11 +33,11 @@ class SimpleProductMapperTest extends TestCase
     public function testMapWithCustomMappers()
     {
         $akeneoProduct = $this->getAkeneoProduct();
-        $mapper = SimpleProductMapper::create()
+        $mapper = ProductMapper::create()
             ->withAttributeSetCodeMapper(function (string $akeneoFamily = 'default') {
                 return "{$akeneoFamily}_modified";
             })
-            ->withCustomAttributeMapper(CustomAttributeMapper::create()->withCurrency('gbp'));
+            ->withCustomAttributeTransform(CustomAttributeMapper::create()->withCurrency('gbp'));
         $actual = $mapper($akeneoProduct);
         $expected = ProductDataSet::of([
             Magento2ProductData::of('abc123', 'abc123')

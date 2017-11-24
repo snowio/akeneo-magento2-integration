@@ -2,11 +2,13 @@
 declare(strict_types=1);
 namespace SnowIO\AkeneoMagento2;
 
+use Joshdifabio\Transform\FlatMapElements;
+use Joshdifabio\Transform\FlatMapValues;
+use Joshdifabio\Transform\Transform;
+use Joshdifabio\Transform\WithKeys;
 use SnowIO\AkeneoDataModel\AttributeValue;
-use SnowIO\AkeneoDataModel\AttributeValueSet;
 use SnowIO\AkeneoDataModel\PriceCollection;
 use SnowIO\Magento2DataModel\CustomAttribute;
-use SnowIO\Magento2DataModel\CustomAttributeSet;
 
 final class CustomAttributeMapper
 {
@@ -15,33 +17,26 @@ final class CustomAttributeMapper
         return new self;
     }
 
-    public function __invoke(AttributeValueSet $akeneoAttributeValues): CustomAttributeSet
+    public function getTransform(): Transform
     {
-        foreach ($this->inputFilters as $inputFilter) {
-            $akeneoAttributeValues = $akeneoAttributeValues->filter($inputFilter);
-        }
+        return FlatMapElements::via($this);
+    }
 
-        $customAttributes = [];
-        /** @var AttributeValue $attributeValue */
-        foreach ($akeneoAttributeValues as $attributeValue) {
-            $value = $attributeValue->getValue();
+    public function getKvTransform(): Transform
+    {
+        return WithKeys::ofInputElement()->then(FlatMapValues::via($this));
+    }
 
-            if ($value instanceof PriceCollection) {
-                if (null === $this->currency) {
-                    continue;
-                }
-
-                $value = $value->getAmount($this->currency);
+    public function __invoke(AttributeValue $akeneoAttributeValue)
+    {
+        $value = $akeneoAttributeValue->getValue();
+        if ($value instanceof PriceCollection) {
+            if ($this->currency === null) {
+                return;
             }
-
-            $customAttributes[] = CustomAttribute::of($attributeValue->getAttributeCode(), $value);
+            $value = $value->getAmount($this->currency);
         }
-
-        foreach ($this->outputFilters as $outputFilter) {
-            $customAttributes = \array_filter($customAttributes, $outputFilter);
-        }
-
-        return CustomAttributeSet::of($customAttributes);
+        yield CustomAttribute::of($akeneoAttributeValue->getAttributeCode(), $value);
     }
 
     public function withCurrency(string $currency): self
@@ -51,22 +46,6 @@ final class CustomAttributeMapper
         return $result;
     }
 
-    public function withInputFilter(callable $predicate): self
-    {
-        $result = clone $this;
-        $result->inputFilters[] = $predicate;
-        return $result;
-    }
-
-    public function withOutputFilter(callable $predicate): self
-    {
-        $result = clone $this;
-        $result->outputFilters[] = $predicate;
-        return $result;
-    }
-
-    private $inputFilters = [];
-    private $outputFilters = [];
     private $currency;
 
     private function __construct()

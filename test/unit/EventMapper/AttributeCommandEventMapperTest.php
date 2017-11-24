@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 namespace SnowIO\AkeneoMagento2\Test\EventMapper;
 
-use SnowIO\AkeneoMagento2\EventMapper\AttributeEventCommandMapper;
+use SnowIO\AkeneoMagento2\MessageMapper\AttributeMessageMapper;
 use SnowIO\Magento2DataModel\AttributeData;
 use SnowIO\Magento2DataModel\Command\DeleteAttributeCommand;
 use SnowIO\Magento2DataModel\Command\SaveAttributeCommand;
@@ -30,7 +30,7 @@ class AttributeCommandEventMapperTest extends CommandEventMapperTest
         $expected = SaveAttributeCommand::of(AttributeData::of('diameter', 'text',
             'Diameter'))->withTimestamp(1510313694);
 
-        $mapper = AttributeEventCommandMapper::create($this->getMagentoConfiguration());
+        $mapper = AttributeMessageMapper::create($this->getMagentoConfiguration());
         $actual = $mapper->getSaveCommands($eventJson);
         self::assertEquals($expected->toJson(), iterator_to_array($actual)[0]->toJson());
     }
@@ -53,7 +53,7 @@ class AttributeCommandEventMapperTest extends CommandEventMapperTest
 
         $expected = DeleteAttributeCommand::of('diameter')->withTimestamp(1510313694);
 
-        $mapper = AttributeEventCommandMapper::create($this->getMagentoConfiguration());
+        $mapper = AttributeMessageMapper::create($this->getMagentoConfiguration());
         $actual = $mapper->getDeleteCommands($eventJson);
         self::assertEquals($expected->toJson(), iterator_to_array($actual)[0]->toJson());
 

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace SnowIO\AkeneoMagento2\Test\EventMapper;
 
-use SnowIO\AkeneoMagento2\EventMapper\CategoryEventCommandMapper;
+use SnowIO\AkeneoMagento2\MessageMapper\CategoryEventCommandMapper;
 use SnowIO\Magento2DataModel\CategoryData;
 use SnowIO\Magento2DataModel\Command\DeleteCategoryCommand;
 use SnowIO\Magento2DataModel\Command\SaveCategoryCommand;

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace SnowIO\AkeneoMagento2\Test\EventMapper;
 
-use SnowIO\AkeneoMagento2\EventMapper\AttributeOptionEventCommandMapper;
+use SnowIO\AkeneoMagento2\MessageMapper\AttributeOptionMessageMapper;
 use SnowIO\Magento2DataModel\AttributeOption;
 use SnowIO\Magento2DataModel\Command\DeleteAttributeOptionCommand;
 use SnowIO\Magento2DataModel\Command\SaveAttributeOptionCommand;
@@ -24,7 +24,7 @@ class AttributeOptionCommandEventMapperTest extends CommandEventMapperTest
 
         $expected = SaveAttributeOptionCommand::of(AttributeOption::of('size', 'large', 'Large'))
             ->withTimestamp(1510313694);
-        $mapper = AttributeOptionEventCommandMapper::create($this->getMagentoConfiguration());
+        $mapper = AttributeOptionMessageMapper::create($this->getMagentoConfiguration());
         $actual = $mapper->getSaveCommands($eventJson);
         self::assertEquals($expected->toJson(), iterator_to_array($actual)[0]->toJson());
     }
@@ -42,7 +42,7 @@ class AttributeOptionCommandEventMapperTest extends CommandEventMapperTest
 
         $expected = DeleteAttributeOptionCommand::of('size', 'large')
             ->withTimestamp(1510313694);
-        $mapper = AttributeOptionEventCommandMapper::create($this->getMagentoConfiguration());
+        $mapper = AttributeOptionMessageMapper::create($this->getMagentoConfiguration());
         $actual = $mapper->getDeleteCommands($eventJson);
         self::assertEquals($expected->toJson(), iterator_to_array($actual)[0]->toJson());
     }
