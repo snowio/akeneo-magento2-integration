@@ -9,7 +9,6 @@ use SnowIO\AkeneoMagento2\CategoryMapper;
 use SnowIO\AkeneoMagento2\EventMapper\MagentoConfiguration;
 use SnowIO\AkeneoMagento2\ProductCategoryAssociationMapper;
 use SnowIO\AkeneoMagento2\SimpleProductMapper;
-use SnowIO\Magento2DataModel\ProductCategoryAssociation;
 
 abstract class CommandEventMapperTest extends TestCase
 {
@@ -46,8 +45,6 @@ abstract class CommandEventMapperTest extends TestCase
             {
                 return false;
             }
-
-
         };
     }
 
