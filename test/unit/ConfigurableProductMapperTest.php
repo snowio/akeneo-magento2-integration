@@ -20,7 +20,6 @@ class ConfigurableProductMapperTest extends TestCase
         $mapper = ConfigurableProductMapper::create();
         $actual = $mapper($akeneoVariant);
         $expected = ProductData::of('abc123', 'abc123')
-            ->withAttributeSetCode('mens_t_shirts')
             ->withTypeId(ProductTypeId::CONFIGURABLE)
             ->withVisibility(ProductVisibility::CATALOG_SEARCH)
             ->withCustomAttributes(CustomAttributeSet::of([
@@ -56,7 +55,6 @@ class ConfigurableProductMapperTest extends TestCase
 
         $actual = $mapper($akeneoVariant);
         $expected = ProductData::of('abc123', 'abc123')
-            ->withAttributeSetCode('mens_t_shirts')
             ->withTypeId(ProductTypeId::CONFIGURABLE)
             ->withVisibility(ProductVisibility::CATALOG_SEARCH)
             ->withCustomAttributes(

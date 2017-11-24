@@ -22,11 +22,6 @@ class ConfigurableProductMapper
             $akeneoVariantGroup->getCode()
         )->withTypeId(ProductTypeId::CONFIGURABLE);
 
-        $family = $akeneoVariantGroup->getFamily();
-        if ($family) {
-            $magento2Configurable = $magento2Configurable->withAttributeSetCode($family);
-        }
-
         $visibility = ProductVisibility::CATALOG_SEARCH;
         $customAttributes = ($this->customAttributeMapper)($akeneoVariantGroup->getAttributeValues());
         return $magento2Configurable
