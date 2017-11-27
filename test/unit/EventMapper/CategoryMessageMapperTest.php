@@ -2,12 +2,15 @@
 declare(strict_types=1);
 namespace SnowIO\AkeneoMagento2\Test\EventMapper;
 
-use SnowIO\AkeneoMagento2\MessageMapper\CategoryEventCommandMapper;
+use PHPUnit\Framework\TestCase;
+use SnowIO\AkeneoMagento2\CategoryMapper;
+use SnowIO\AkeneoMagento2\MessageMapper\CategoryMessageMapper;
+use SnowIO\AkeneoMagento2\MessageMapper\MessageMapper;
 use SnowIO\Magento2DataModel\CategoryData;
 use SnowIO\Magento2DataModel\Command\DeleteCategoryCommand;
 use SnowIO\Magento2DataModel\Command\SaveCategoryCommand;
 
-class CategoryCommandEventMapperTest extends CommandEventMapperTest
+class CategoryMessageMapperTest extends TestCase
 {
     public function testSaveCommandMapper()
     {
@@ -25,8 +28,7 @@ class CategoryCommandEventMapperTest extends CommandEventMapperTest
 
         $expected = SaveCategoryCommand::of(CategoryData::of('mens_trousers', 'Men\'s Trousers')->withParentCode('mens_wear'))
             ->withTimestamp(1510313694);
-        $mapper = CategoryEventCommandMapper::create($this->getMagentoConfiguration());
-        $actual = $mapper->getSaveCommands($eventJson);
+        $actual = $this->getMessageMapper()->transformAkeneoSavedEventToMagentoSaveCommands($eventJson);
         self::assertEquals($expected->toJson(), iterator_to_array($actual)[0]->toJson());
     }
 
@@ -42,8 +44,13 @@ class CategoryCommandEventMapperTest extends CommandEventMapperTest
         ];
 
         $expected = DeleteCategoryCommand::of('mens_trousers')->withTimestamp(1510313694);
-        $mapper = CategoryEventCommandMapper::create($this->getMagentoConfiguration());
-        $actual = $mapper->getDeleteCommands($eventJson);
+        $actual = $this->getMessageMapper()->transformAkeneoDeletedEventToMagentoDeleteCommands($eventJson);
         self::assertEquals($expected->toJson(), iterator_to_array($actual)[0]->toJson());
+    }
+
+    private function getMessageMapper(): MessageMapper
+    {
+        $categoryTransform = CategoryMapper::withDefaultLocale('en_GB')->getTransform();
+        return CategoryMessageMapper::withCategoryTransform($categoryTransform);
     }
 }

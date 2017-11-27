@@ -2,10 +2,7 @@
 declare(strict_types=1);
 namespace SnowIO\AkeneoMagento2;
 
-use Joshdifabio\Transform\MapElements;
-use Joshdifabio\Transform\MapValues;
 use Joshdifabio\Transform\Transform;
-use Joshdifabio\Transform\WithKeys;
 use SnowIO\AkeneoDataModel\AttributeValueSet;
 use SnowIO\AkeneoDataModel\VariantGroupData;
 use SnowIO\Magento2DataModel\CustomAttributeSet;
@@ -13,21 +10,11 @@ use SnowIO\Magento2DataModel\ProductData;
 use SnowIO\Magento2DataModel\ProductTypeId;
 use SnowIO\Magento2DataModel\ProductVisibility;
 
-class VariantGroupMapper
+class VariantGroupMapper extends DataMapper
 {
     public static function create(): self
     {
         return new self;
-    }
-
-    public function getTransform(): Transform
-    {
-        return MapElements::via($this);
-    }
-
-    public function getKvTransform(): Transform
-    {
-        return WithKeys::ofInputElement()->then(MapValues::via($this));
     }
 
     public function __invoke(VariantGroupData $akeneoVariantGroup): ProductData

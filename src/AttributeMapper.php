@@ -2,32 +2,18 @@
 declare(strict_types=1);
 namespace SnowIO\AkeneoMagento2;
 
-use Joshdifabio\Transform\MapElements;
-use Joshdifabio\Transform\MapValues;
-use Joshdifabio\Transform\Transform;
-use Joshdifabio\Transform\WithKeys;
 use SnowIO\AkeneoDataModel\AttributeData as AkeneoAttributeData;
 use SnowIO\AkeneoDataModel\AttributeType;
 use SnowIO\Magento2DataModel\AttributeData as Magento2AttributeData;
 use SnowIO\Magento2DataModel\FrontendInput;
 
-final class AttributeMapper
+final class AttributeMapper extends DataMapper
 {
-    public static function create(string $defaultLocale): self
+    public static function withDefaultLocale(string $defaultLocale): self
     {
         $attributeMapper = new self;
         $attributeMapper->defaultLocale = $defaultLocale;
         return $attributeMapper;
-    }
-
-    public function getTransform(): Transform
-    {
-        return MapElements::via($this);
-    }
-
-    public function getKvTransform(): Transform
-    {
-        return WithKeys::ofInputElement()->then(MapValues::via($this));
     }
 
     public function __invoke(AkeneoAttributeData $attributeData): Magento2AttributeData

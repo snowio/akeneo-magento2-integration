@@ -2,14 +2,14 @@
 declare(strict_types=1);
 namespace SnowIO\AkeneoMagento2\Test\EventMapper;
 
+use PHPUnit\Framework\TestCase;
 use SnowIO\AkeneoMagento2\MessageMapper\ProductMessageMapper;
-use SnowIO\Magento2DataModel\Command\DeleteProductCommand;
 use SnowIO\Magento2DataModel\Command\SaveProductCommand;
 use SnowIO\Magento2DataModel\CustomAttribute;
 use SnowIO\Magento2DataModel\CustomAttributeSet;
 use SnowIO\Magento2DataModel\ProductData;
 
-class ProductCommandEventMapper extends CommandEventMapperTest
+class ProductMessageMapperTest extends TestCase
 {
     public function testSaveCommandMapper()
     {
@@ -65,8 +65,7 @@ class ProductCommandEventMapper extends CommandEventMapperTest
                 CustomAttribute::of('product_title', 'ABC 123 Product')
             ])))
             ->withTimestamp(1508491122);
-        $mapper = ProductMessageMapper::create($this->getMagentoConfiguration());
-        $actual = $mapper->getSaveCommands($eventJson);
+        $actual = ProductMessageMapper::create()->transformAkeneoSavedEventToMagentoSaveCommands($eventJson);
         self::assertEquals($expected->toJson(), iterator_to_array($actual)[0]->toJson());
     }
 

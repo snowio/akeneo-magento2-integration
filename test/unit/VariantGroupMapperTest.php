@@ -12,7 +12,7 @@ use SnowIO\Magento2DataModel\ProductData;
 use SnowIO\Magento2DataModel\ProductTypeId;
 use SnowIO\Magento2DataModel\ProductVisibility;
 
-class ConfigurableProductMapperTest extends TestCase
+class VariantGroupMapperTest extends TestCase
 {
     public function testMap()
     {
@@ -20,7 +20,7 @@ class ConfigurableProductMapperTest extends TestCase
         $mapper = VariantGroupMapper::create();
         $actual = $mapper($akeneoVariant);
         $expected = ProductData::of('abc123', 'abc123')
-            ->withAttributeSetCode('mens_t_shirts')
+            ->withAttributeSetCode('default')
             ->withTypeId(ProductTypeId::CONFIGURABLE)
             ->withVisibility(ProductVisibility::CATALOG_SEARCH)
             ->withCustomAttributes(CustomAttributeSet::of([
@@ -50,13 +50,15 @@ class ConfigurableProductMapperTest extends TestCase
     {
         $akeneoVariant = $this->getAkeneoConfigurableWithProduct();
         $mapper = VariantGroupMapper::create();
-        $mapper = $mapper->withCustomAttributeMapper(
-            CustomAttributeMapper::create()->withCurrency('gbp')
+        $mapper = $mapper->withCustomAttributeTransform(
+            CustomAttributeMapper::create()
+                ->withCurrency('gbp')
+                ->getTransform()
         );
 
         $actual = $mapper($akeneoVariant);
         $expected = ProductData::of('abc123', 'abc123')
-            ->withAttributeSetCode('mens_t_shirts')
+            ->withAttributeSetCode('default')
             ->withTypeId(ProductTypeId::CONFIGURABLE)
             ->withVisibility(ProductVisibility::CATALOG_SEARCH)
             ->withCustomAttributes(

@@ -2,10 +2,7 @@
 declare(strict_types=1);
 namespace SnowIO\AkeneoMagento2;
 
-use Joshdifabio\Transform\MapElements;
-use Joshdifabio\Transform\MapValues;
 use Joshdifabio\Transform\Transform;
-use Joshdifabio\Transform\WithKeys;
 use SnowIO\AkeneoDataModel\AttributeValueSet;
 use SnowIO\AkeneoDataModel\ProductData as AkeneoProductData;
 use SnowIO\Magento2DataModel\CustomAttributeSet;
@@ -14,21 +11,11 @@ use SnowIO\Magento2DataModel\ProductStatus;
 use SnowIO\Magento2DataModel\ProductTypeId;
 use SnowIO\Magento2DataModel\ProductVisibility;
 
-final class ProductMapper
+final class ProductMapper extends DataMapper
 {
     public static function create(): self
     {
         return new self;
-    }
-
-    public function getTransform(): Transform
-    {
-        return MapElements::via($this);
-    }
-
-    public function getKvTransform(): Transform
-    {
-        return WithKeys::ofInputElement()->then(MapValues::via($this));
     }
 
     public function __invoke(AkeneoProductData $akeneoProduct): Magento2ProductData

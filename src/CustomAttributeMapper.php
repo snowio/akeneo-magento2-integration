@@ -4,13 +4,14 @@ namespace SnowIO\AkeneoMagento2;
 
 use Joshdifabio\Transform\FlatMapElements;
 use Joshdifabio\Transform\FlatMapValues;
+use Joshdifabio\Transform\Identity;
 use Joshdifabio\Transform\Transform;
 use Joshdifabio\Transform\WithKeys;
 use SnowIO\AkeneoDataModel\AttributeValue;
 use SnowIO\AkeneoDataModel\PriceCollection;
 use SnowIO\Magento2DataModel\CustomAttribute;
 
-final class CustomAttributeMapper
+final class CustomAttributeMapper extends DataMapper
 {
     public static function create(): self
     {
@@ -24,7 +25,7 @@ final class CustomAttributeMapper
 
     public function getKvTransform(): Transform
     {
-        return WithKeys::ofInputElement()->then(FlatMapValues::via($this));
+        return WithKeys::of(Identity::fn())->then(FlatMapValues::via($this));
     }
 
     public function __invoke(AttributeValue $akeneoAttributeValue)

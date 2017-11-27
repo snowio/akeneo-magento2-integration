@@ -5,7 +5,6 @@ namespace SnowIO\AkeneoMagento2\MessageMapper;
 use Joshdifabio\Transform\Pipeline;
 use Joshdifabio\Transform\Diff;
 use Joshdifabio\Transform\Filter;
-use Joshdifabio\Transform\FlatMapElements;
 use Joshdifabio\Transform\MapElements;
 use Joshdifabio\Transform\Transform;
 use SnowIO\AkeneoDataModel\Event\EntityStateEvent;
@@ -21,7 +20,7 @@ abstract class MessageMapper
             ->then(MapElements::via(function (Command $command) use ($entitySavedEvent) {
                 return $command->withTimestamp($entitySavedEvent->getTimestamp());
             }))
-            ->applyTo([[$entitySavedEvent->getPreviousEntityData()], [$entitySavedEvent->getCurrentEntityData()]]);
+            ->applyTo([[$entitySavedEvent->getCurrentEntityData()], [$entitySavedEvent->getPreviousEntityData()]]);
     }
 
     public function transformAkeneoSavedEventToMagentoDeleteCommands($entitySavedEvent): \Iterator
@@ -37,7 +36,7 @@ abstract class MessageMapper
 
     public function transformAkeneoDeletedEventToMagentoDeleteCommands($entityDeletedEvent): \Iterator
     {
-        $entityDeletedEvent = $this->resolveEntitySavedEvent($entityDeletedEvent);
+        $entityDeletedEvent = $this->resolveEntityDeletedEvent($entityDeletedEvent);
 
         return $this->transformAkeneoDataToMagentoDeleteCommands()
             ->then(MapElements::via(function (Command $command) use ($entityDeletedEvent) {
@@ -50,7 +49,7 @@ abstract class MessageMapper
     {
         return Pipeline::of(
             Filter::notEqualTo([null]),
-            FlatMapElements::viaTransform($this->dataTransform),
+            MapElements::via([$this->dataTransform, 'applyTo']),
             Diff::withRepresentativeValue(function ($magentoEntityData) {
                 return $this->getRepresentativeValueForDiff($magentoEntityData);
             }),
@@ -62,13 +61,13 @@ abstract class MessageMapper
 
     public function transformAkeneoDataToMagentoDeleteCommands(): Transform
     {
+        $elementTransform = $this->dataTransform->then(MapElements::via(function ($magentoEntityData) {
+            return $this->getMagentoEntityIdentifier($magentoEntityData);
+        }));
+
         return Pipeline::of(
             Filter::notEqualTo([null]),
-            FlatMapElements::viaTransform(
-                $this->dataTransform->then(MapElements::via(function ($magentoEntityData) {
-                    return $this->getMagentoEntityIdentifier($magentoEntityData);
-                }))
-            ),
+            MapElements::via([$elementTransform, 'applyTo']),
             Diff::create(),
             MapElements::via(function ($magentoEntityIdentifier) {
                 return $this->createDeleteEntityCommand($magentoEntityIdentifier);

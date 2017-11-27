@@ -15,9 +15,10 @@ class AttributeMapperTest extends TestCase
 {
     public function testMap()
     {
-        $mapper = AttributeMapper::create('en_GB')->withTypeToFrontendInputMapper(function () {
-            return FrontendInput::MULTISELECT;
-        });
+        $mapper = AttributeMapper::withDefaultLocale('en_GB')
+            ->withTypeToFrontendInputMapper(function () {
+                return FrontendInput::MULTISELECT;
+            });
         $akeneoAttributeData = AkeneoAttributeData::fromJson([
             'code' => 'size',
             'type' => AkeneoAttributeType::SIMPLESELECT,
