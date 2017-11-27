@@ -4,6 +4,7 @@ namespace SnowIO\AkeneoMagento2\MessageMapper;
 
 use Joshdifabio\Transform\Pipeline;
 use Joshdifabio\Transform\Diff;
+use Joshdifabio\Transform\Filter;
 use Joshdifabio\Transform\MapElements;
 use Joshdifabio\Transform\Transform;
 use SnowIO\AkeneoDataModel\Event\EntityStateEvent;
@@ -19,7 +20,7 @@ abstract class MessageMapper
             ->then(MapElements::via(function (Command $command) use ($entitySavedEvent) {
                 return $command->withTimestamp($entitySavedEvent->getTimestamp());
             }))
-            ->applyTo([(array)$entitySavedEvent->getCurrentEntityData(), (array)$entitySavedEvent->getPreviousEntityData()]);
+            ->applyTo([[$entitySavedEvent->getCurrentEntityData()], [$entitySavedEvent->getPreviousEntityData()]]);
     }
 
     public function transformAkeneoSavedEventToMagentoDeleteCommands($entitySavedEvent): \Iterator
@@ -30,7 +31,7 @@ abstract class MessageMapper
             ->then(MapElements::via(function (Command $command) use ($entitySavedEvent) {
                 return $command->withTimestamp($entitySavedEvent->getTimestamp());
             }))
-            ->applyTo([(array)$entitySavedEvent->getPreviousEntityData(), (array)$entitySavedEvent->getCurrentEntityData()]);
+            ->applyTo([[$entitySavedEvent->getPreviousEntityData()], [$entitySavedEvent->getCurrentEntityData()]]);
     }
 
     public function transformAkeneoDeletedEventToMagentoDeleteCommands($entityDeletedEvent): \Iterator
@@ -41,12 +42,13 @@ abstract class MessageMapper
             ->then(MapElements::via(function (Command $command) use ($entityDeletedEvent) {
                 return $command->withTimestamp($entityDeletedEvent->getTimestamp());
             }))
-            ->applyTo([(array)$entityDeletedEvent->getPreviousEntityData()]);
+            ->applyTo([[$entityDeletedEvent->getPreviousEntityData()]]);
     }
 
     public function transformAkeneoDataToMagentoSaveCommands(): Transform
     {
         return Pipeline::of(
+            Filter::notEqualTo([null]),
             MapElements::via([$this->dataTransform, 'applyTo']),
             Diff::withRepresentativeValue(function ($magentoEntityData) {
                 return $this->getRepresentativeValueForDiff($magentoEntityData);
@@ -64,6 +66,7 @@ abstract class MessageMapper
         }));
 
         return Pipeline::of(
+            Filter::notEqualTo([null]),
             MapElements::via([$elementTransform, 'applyTo']),
             Diff::create(),
             MapElements::via(function ($magentoEntityIdentifier) {
