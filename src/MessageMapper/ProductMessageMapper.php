@@ -12,7 +12,7 @@ use SnowIO\Magento2DataModel\ProductData;
 use SnowIO\Magento2DataModel\Command\DeleteProductCommand;
 use SnowIO\Magento2DataModel\Command\SaveProductCommand;
 
-final class ProductMessageMapper extends MessageMapper
+final class ProductMessageMapper extends MessageMapperWithDeleteSupport
 {
     public static function create(): self
     {

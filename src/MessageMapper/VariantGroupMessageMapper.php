@@ -14,14 +14,14 @@ use SnowIO\Magento2DataModel\ProductData;
 use SnowIO\Magento2DataModel\Command\DeleteProductCommand;
 use SnowIO\Magento2DataModel\Command\SaveProductCommand;
 
-final class VariantGroupMessageMapper extends MessageMapper
+final class VariantGroupMessageMapper extends MessageMapperWithDeleteSupport
 {
     public static function create(): self
     {
         return new self(VariantGroupMapper::create()->getTransform());
     }
 
-    public function withProductTransform(Transform $transform): self
+    public function withVariantGroupTransform(Transform $transform): self
     {
         return new self($transform);
     }

@@ -11,7 +11,7 @@ use SnowIO\Magento2DataModel\Command\Command;
 use SnowIO\Magento2DataModel\Command\DeleteCategoryCommand;
 use SnowIO\Magento2DataModel\Command\SaveCategoryCommand;
 
-final class CategoryMessageMapper extends MessageMapper
+final class CategoryMessageMapper extends MessageMapperWithDeleteSupport
 {
     public static function withCategoryTransform(Transform $transform): self
     {

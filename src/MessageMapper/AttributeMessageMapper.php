@@ -11,7 +11,7 @@ use SnowIO\Magento2DataModel\Command\Command;
 use SnowIO\Magento2DataModel\Command\DeleteAttributeCommand;
 use SnowIO\Magento2DataModel\Command\SaveAttributeCommand;
 
-final class AttributeMessageMapper extends MessageMapper
+final class AttributeMessageMapper extends MessageMapperWithDeleteSupport
 {
     public static function withAttributeTransform(Transform $transform): self
     {
