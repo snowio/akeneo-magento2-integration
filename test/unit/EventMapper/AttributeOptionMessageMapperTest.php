@@ -5,7 +5,6 @@ namespace SnowIO\AkeneoMagento2\Test\EventMapper;
 use PHPUnit\Framework\TestCase;
 use SnowIO\AkeneoMagento2\AttributeOptionMapper;
 use SnowIO\AkeneoMagento2\MessageMapper\AttributeOptionMessageMapper;
-use SnowIO\AkeneoMagento2\MessageMapper\MessageMapper;
 use SnowIO\Magento2DataModel\AttributeOption;
 use SnowIO\Magento2DataModel\Command\DeleteAttributeOptionCommand;
 use SnowIO\Magento2DataModel\Command\SaveAttributeOptionCommand;
@@ -48,7 +47,7 @@ class AttributeOptionMessageMapperTest extends TestCase
         self::assertEquals($expected->toJson(), iterator_to_array($actual)[0]->toJson());
     }
 
-    private function getMessageMapper(): MessageMapper
+    private function getMessageMapper(): AttributeOptionMessageMapper
     {
         $attributeOptionTransform = AttributeOptionMapper::withDefaultLocale('en_GB')->getTransform();
         return AttributeOptionMessageMapper::withAttributeOptionTransform($attributeOptionTransform);
