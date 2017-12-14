@@ -14,6 +14,11 @@ abstract class DataMapper
         return MapElements::via($this);
     }
 
+    public function getValueTransform(): Transform
+    {
+        return MapValues::via($this);
+    }
+
     public function getKvTransform(): Transform
     {
         return WithKeys::of(identity())->then(MapValues::via($this));

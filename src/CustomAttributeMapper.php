@@ -23,6 +23,11 @@ final class CustomAttributeMapper extends DataMapper
         return FlatMapElements::via($this);
     }
 
+    public function getValueTransform(): Transform
+    {
+        return FlatMapValues::via($this);
+    }
+
     public function getKvTransform(): Transform
     {
         return WithKeys::of(Identity::fn())->then(FlatMapValues::via($this));
