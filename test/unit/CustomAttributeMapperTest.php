@@ -29,24 +29,29 @@ class CustomAttributeMapperTest extends TestCase
 
     public function testMap()
     {
-        $customAttributeMapper = CustomAttributeMapper::create()->withCurrency('eur');
+        $customAttributeMapper = CustomAttributeMapper::create()
+            ->withCurrency('eur')
+            ->getTransform();
         $expected = CustomAttributeSet::of([
             CustomAttribute::of('size', 'Large'),
             CustomAttribute::of('price', '37.45'),
             CustomAttribute::of('weight', '30'),
         ]);
-        $actual = $customAttributeMapper($this->akeneoAttributes);
+        $transformOutput = $customAttributeMapper->applyTo($this->akeneoAttributes);
+        $actual = CustomAttributeSet::of(\iterator_to_array($transformOutput));
         self::assertTrue($expected->equals($actual));
     }
 
     public function testMapWithoutCurrency()
     {
-        $customAttributeMapper = CustomAttributeMapper::create();
+        $customAttributeMapper = CustomAttributeMapper::create()
+            ->getTransform();
         $expected = CustomAttributeSet::of([
             CustomAttribute::of('size', 'Large'),
             CustomAttribute::of('weight', '30'),
         ]);
-        $actual = $customAttributeMapper($this->akeneoAttributes);
+        $transformOutput = $customAttributeMapper->applyTo($this->akeneoAttributes);
+        $actual = CustomAttributeSet::of(\iterator_to_array($transformOutput));
         self::assertTrue($expected->equals($actual));
     }
 }

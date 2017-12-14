@@ -7,9 +7,9 @@ use SnowIO\AkeneoDataModel\AttributeType;
 use SnowIO\Magento2DataModel\AttributeData as Magento2AttributeData;
 use SnowIO\Magento2DataModel\FrontendInput;
 
-final class AttributeMapper
+final class AttributeMapper extends DataMapper
 {
-    public static function create(string $defaultLocale): self
+    public static function withDefaultLocale(string $defaultLocale): self
     {
         $attributeMapper = new self;
         $attributeMapper->defaultLocale = $defaultLocale;

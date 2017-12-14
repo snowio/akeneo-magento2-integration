@@ -5,9 +5,9 @@ namespace SnowIO\AkeneoMagento2;
 use SnowIO\AkeneoDataModel\CategoryData as AkeneoCategoryData;
 use SnowIO\Magento2DataModel\CategoryData as Magento2CategoryData;
 
-final class CategoryMapper
+final class CategoryMapper extends DataMapper
 {
-    public static function create(string $defaultLocale): self
+    public static function withDefaultLocale(string $defaultLocale): self
     {
         return new self($defaultLocale);
     }

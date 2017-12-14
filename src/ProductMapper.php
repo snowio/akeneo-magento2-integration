@@ -2,20 +2,23 @@
 declare(strict_types=1);
 namespace SnowIO\AkeneoMagento2;
 
+use Joshdifabio\Transform\Transform;
+use SnowIO\AkeneoDataModel\AttributeValueSet;
 use SnowIO\AkeneoDataModel\ProductData as AkeneoProductData;
+use SnowIO\Magento2DataModel\CustomAttributeSet;
 use SnowIO\Magento2DataModel\ProductData as Magento2ProductData;
-use SnowIO\Magento2DataModel\ProductDataSet;
 use SnowIO\Magento2DataModel\ProductStatus;
+use SnowIO\Magento2DataModel\ProductTypeId;
 use SnowIO\Magento2DataModel\ProductVisibility;
 
-final class SimpleProductMapper
+final class ProductMapper extends DataMapper
 {
     public static function create(): self
     {
         return new self;
     }
 
-    public function __invoke(AkeneoProductData $akeneoProduct): ProductDataSet
+    public function __invoke(AkeneoProductData $akeneoProduct): Magento2ProductData
     {
         $magento2Product = Magento2ProductData::of($akeneoProduct->getSku(), $akeneoProduct->getSku());
         $attributeSetCode = ($this->attributeSetCodeMapper)($akeneoProduct->getProperties()->getFamily());
@@ -24,17 +27,18 @@ final class SimpleProductMapper
         }
         $status = $akeneoProduct->getProperties()->getEnabled() ? ProductStatus::ENABLED : ProductStatus::DISABLED;
         $visibility = $akeneoProduct->getProperties()->getVariantGroup() ? ProductVisibility::NOT_VISIBLE_INDIVIDUALLY : ProductVisibility::CATALOG_SEARCH;
-        $customAttributes = ($this->customAttributeMapper)($akeneoProduct->getAttributeValues());
-        return ProductDataSet::of([$magento2Product
+        $customAttributes = $this->getCustomAttributeSet($akeneoProduct->getAttributeValues());
+        return $magento2Product
+            ->withTypeId(ProductTypeId::SIMPLE)
             ->withStatus($status)
             ->withVisibility($visibility)
-            ->withCustomAttributes($customAttributes)]);
+            ->withCustomAttributes($customAttributes);
     }
 
-    public function withCustomAttributeMapper(callable $customAttributeMapper): self
+    public function withCustomAttributeTransform(Transform $customAttributeTransform): self
     {
         $result = clone $this;
-        $result->customAttributeMapper = $customAttributeMapper;
+        $result->customAttributeTransform = $customAttributeTransform;
         return $result;
     }
 
@@ -45,17 +49,23 @@ final class SimpleProductMapper
         return $result;
     }
 
-    /** @var CustomAttributeMapper */
-    private $customAttributeMapper;
-
+    /** @var Transform */
+    private $customAttributeTransform;
     /** @var callable */
     private $attributeSetCodeMapper;
 
     private function __construct()
     {
-        $this->customAttributeMapper = CustomAttributeMapper::create();
+        $this->customAttributeTransform = CustomAttributeMapper::create()->getTransform();
         $this->attributeSetCodeMapper = function (string $family = null) {
             return $family;
         };
+    }
+
+    private function getCustomAttributeSet(AttributeValueSet $akeneoAttributeValues): CustomAttributeSet
+    {
+        $customAttributesIterator = $this->customAttributeTransform->applyTo($akeneoAttributeValues);
+        $customAttributesArray = \iterator_to_array($customAttributesIterator);
+        return CustomAttributeSet::of($customAttributesArray);
     }
 }

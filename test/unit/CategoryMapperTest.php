@@ -19,7 +19,7 @@ class CategoryMapperTest extends TestCase
             ->withLabel(LocalizedString::of('Mens T-Shirts', 'en_GB'));
         $expected = Magento2CategoryData::of('t_shirts', 'Mens T-Shirts')
             ->withParentCode('mens');
-        $mapper = CategoryMapper::create('en_GB');
+        $mapper = CategoryMapper::withDefaultLocale('en_GB');
         $actual = $mapper($akeneoCategoryData);
         self::assertTrue($expected->equals($actual));
     }

@@ -2,12 +2,14 @@
 declare(strict_types = 1);
 namespace SnowIO\AkeneoMagento2\Test\EventMapper;
 
-use SnowIO\AkeneoMagento2\EventMapper\AttributeEventCommandMapper;
+use PHPUnit\Framework\TestCase;
+use SnowIO\AkeneoMagento2\AttributeMapper;
+use SnowIO\AkeneoMagento2\MessageMapper\AttributeMessageMapper;
 use SnowIO\Magento2DataModel\AttributeData;
 use SnowIO\Magento2DataModel\Command\DeleteAttributeCommand;
 use SnowIO\Magento2DataModel\Command\SaveAttributeCommand;
 
-class AttributeCommandEventMapperTest extends CommandEventMapperTest
+class AttributeMessageMapperTest extends TestCase
 {
     public function testSaveCommandMapper()
     {
@@ -27,11 +29,9 @@ class AttributeCommandEventMapperTest extends CommandEventMapperTest
             ],
         ];
 
-        $expected = SaveAttributeCommand::of(AttributeData::of('diameter', 'text',
-            'Diameter'))->withTimestamp(1510313694);
-
-        $mapper = AttributeEventCommandMapper::create($this->getMagentoConfiguration());
-        $actual = $mapper->getSaveCommands($eventJson);
+        $expectedAttributeData = AttributeData::of('diameter', 'text', 'Diameter');
+        $expected = SaveAttributeCommand::of($expectedAttributeData)->withTimestamp(1510313694);
+        $actual = $this->getMessageMapper()->transformAkeneoSavedEventToMagentoSaveCommands($eventJson);
         self::assertEquals($expected->toJson(), iterator_to_array($actual)[0]->toJson());
     }
 
@@ -52,10 +52,13 @@ class AttributeCommandEventMapperTest extends CommandEventMapperTest
         ];
 
         $expected = DeleteAttributeCommand::of('diameter')->withTimestamp(1510313694);
-
-        $mapper = AttributeEventCommandMapper::create($this->getMagentoConfiguration());
-        $actual = $mapper->getDeleteCommands($eventJson);
+        $actual = $this->getMessageMapper()->transformAkeneoDeletedEventToMagentoDeleteCommands($eventJson);
         self::assertEquals($expected->toJson(), iterator_to_array($actual)[0]->toJson());
+    }
 
+    private function getMessageMapper(): AttributeMessageMapper
+    {
+        $attributeTransform = AttributeMapper::withDefaultLocale('en_GB')->getTransform();
+        return AttributeMessageMapper::withAttributeTransform($attributeTransform);
     }
 }

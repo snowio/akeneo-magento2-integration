@@ -5,9 +5,9 @@ namespace SnowIO\AkeneoMagento2;
 use SnowIO\Magento2DataModel\AttributeOption as Magento2AttributeOption;
 use SnowIO\AkeneoDataModel\AttributeOption as AkeneoAttributeOption;
 
-final class AttributeOptionMapper
+final class AttributeOptionMapper extends DataMapper
 {
-    public static function create(string $defaultLocale): self
+    public static function withDefaultLocale(string $defaultLocale): self
     {
         return new self($defaultLocale);
     }

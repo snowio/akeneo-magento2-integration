@@ -4,7 +4,7 @@ namespace SnowIO\AkeneoMagento2\Test;
 
 use PHPUnit\Framework\TestCase;
 use SnowIO\AkeneoDataModel\VariantGroupData as AkeneoConfigurable;
-use SnowIO\AkeneoMagento2\ConfigurableProductMapper;
+use SnowIO\AkeneoMagento2\VariantGroupMapper;
 use SnowIO\AkeneoMagento2\CustomAttributeMapper;
 use SnowIO\Magento2DataModel\CustomAttribute;
 use SnowIO\Magento2DataModel\CustomAttributeSet;
@@ -12,15 +12,15 @@ use SnowIO\Magento2DataModel\ProductData;
 use SnowIO\Magento2DataModel\ProductTypeId;
 use SnowIO\Magento2DataModel\ProductVisibility;
 
-class ConfigurableProductMapperTest extends TestCase
+class VariantGroupMapperTest extends TestCase
 {
     public function testMap()
     {
         $akeneoVariant = $this->getAkeneoConfigurableWithProduct();
-        $mapper = ConfigurableProductMapper::create();
+        $mapper = VariantGroupMapper::create();
         $actual = $mapper($akeneoVariant);
         $expected = ProductData::of('abc123', 'abc123')
-            ->withAttributeSetCode('mens_t_shirts')
+            ->withAttributeSetCode('default')
             ->withTypeId(ProductTypeId::CONFIGURABLE)
             ->withVisibility(ProductVisibility::CATALOG_SEARCH)
             ->withCustomAttributes(CustomAttributeSet::of([
@@ -31,7 +31,7 @@ class ConfigurableProductMapperTest extends TestCase
         self::assertEquals($expected->toJson(), $actual->toJson());
         self::assertTrue($expected->equals($actual));
         $akeneoVariant = $this->getAkeneoConfigurableWithoutProduct();
-        $mapper = ConfigurableProductMapper::create();
+        $mapper = VariantGroupMapper::create();
         $actual = $mapper($akeneoVariant);
         $expected = ProductData::of('abc123', 'abc123')
             ->withTypeId(ProductTypeId::CONFIGURABLE)
@@ -49,14 +49,16 @@ class ConfigurableProductMapperTest extends TestCase
     public function testMapWithCustomMappers()
     {
         $akeneoVariant = $this->getAkeneoConfigurableWithProduct();
-        $mapper = ConfigurableProductMapper::create();
-        $mapper = $mapper->withCustomAttributeMapper(
-            CustomAttributeMapper::create()->withCurrency('gbp')
+        $mapper = VariantGroupMapper::create();
+        $mapper = $mapper->withCustomAttributeTransform(
+            CustomAttributeMapper::create()
+                ->withCurrency('gbp')
+                ->getTransform()
         );
 
         $actual = $mapper($akeneoVariant);
         $expected = ProductData::of('abc123', 'abc123')
-            ->withAttributeSetCode('mens_t_shirts')
+            ->withAttributeSetCode('default')
             ->withTypeId(ProductTypeId::CONFIGURABLE)
             ->withVisibility(ProductVisibility::CATALOG_SEARCH)
             ->withCustomAttributes(
