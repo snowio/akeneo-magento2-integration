@@ -2,23 +2,20 @@
 declare(strict_types=1);
 namespace SnowIO\AkeneoMagento2\MessageMapper;
 
-use Joshdifabio\Transform\CoGbkResult;
-use Joshdifabio\Transform\CoGroupByKey;
 use Joshdifabio\Transform\Filter;
 use Joshdifabio\Transform\Kv;
 use Joshdifabio\Transform\MapElements;
-use Joshdifabio\Transform\MapValues;
-use Joshdifabio\Transform\Pipeline;
 use Joshdifabio\Transform\Transform;
-use Joshdifabio\Transform\WithKeys;
 use SnowIO\AkeneoDataModel\Event\CategoryDeletedEvent;
 use SnowIO\AkeneoDataModel\Event\CategorySavedEvent;
 use SnowIO\AkeneoDataModel\Event\EntityStateEvent;
 use SnowIO\Magento2DataModel\CategoryData;
 use SnowIO\Magento2DataModel\Command\Command;
 use SnowIO\Magento2DataModel\Command\DeleteCategoryCommand;
-use SnowIO\Magento2DataModel\Command\MoveCategoryCommand;
 use SnowIO\Magento2DataModel\Command\SaveCategoryCommand;
+use SnowIO\Magento2DataModel\Transform\CreateDeleteCategoryCommands;
+use SnowIO\Magento2DataModel\Transform\CreateMoveCategoryCommands;
+use SnowIO\Magento2DataModel\Transform\CreateSaveCategoryCommands;
 
 final class CategoryMessageMapper extends MessageMapperWithDeleteSupport
 {
@@ -27,47 +24,50 @@ final class CategoryMessageMapper extends MessageMapperWithDeleteSupport
         return new self($transform);
     }
 
+    public function transformAkeneoSavedEventToMagentoSaveCommands($categorySavedEvent): \Iterator
+    {
+        $categorySavedEvent = $this->resolveEntitySavedEvent($categorySavedEvent);
+
+        $currentData = $this->dataTransform
+            ->applyTo([$categorySavedEvent->getCurrentEntityData()]);
+        $previousData = Filter::notEqualTo(null)
+            ->then($this->dataTransform)
+            ->applyTo([$categorySavedEvent->getPreviousEntityData()]);
+
+        return CreateSaveCategoryCommands::fromIterables()
+            ->then(MapElements::via(function (Command $command) use ($categorySavedEvent) {
+                return $command->withTimestamp($categorySavedEvent->getTimestamp());
+            }))
+            ->applyTo([Kv::of('current', $currentData), Kv::of('previous', $previousData)]);
+    }
+
     public function transformAkeneoSavedEventToMagentoMoveCommands($categorySavedEvent): \Iterator
     {
         $categorySavedEvent = $this->resolveEntitySavedEvent($categorySavedEvent);
 
-        $getDataAndApplyKeys = Pipeline::of(
-            $this->dataTransform,
-            WithKeys::of(function (CategoryData $magentoCategoryData) {
-                return $magentoCategoryData->getCode();
-            })
-        );
-
-        $previousParentCodes = Filter::notEqualTo(null)
-            ->then($getDataAndApplyKeys)
+        $currentData = $this->dataTransform
+            ->applyTo([$categorySavedEvent->getCurrentEntityData()]);
+        $previousData = Filter::notEqualTo(null)
+            ->then($this->dataTransform)
             ->applyTo([$categorySavedEvent->getPreviousEntityData()]);
 
-        $currentParentCodes = $getDataAndApplyKeys
-            ->applyTo([$categorySavedEvent->getCurrentEntityData()]);
-
-        $getMoveCategoryCommands = Pipeline::of(
-            CoGroupByKey::create(),
-            Filter::byValue(function (CoGbkResult $result) {
-                /** @var CategoryData|null $currentCategoryData */
-                $currentCategoryData = $result->getOptional('current');
-                /** @var CategoryData|null $previousCategoryData */
-                $previousCategoryData = $result->getOptional('previous');
-                return isset($currentCategoryData, $previousCategoryData)
-                    && $currentCategoryData->getParentCode() !== $previousCategoryData->getParentCode();
-            }),
-            MapValues::via(function (CoGbkResult $result) {
-                return $result->getOnly('current')->getParentCode();
-            }),
-            MapElements::via(Kv::unpack(function (string $categoryCode, string $parentCategoryCode) use ($categorySavedEvent) {
-                return MoveCategoryCommand::of($categoryCode, $parentCategoryCode)
-                    ->withTimestamp($categorySavedEvent->getTimestamp());
+        return CreateMoveCategoryCommands::fromIterables()
+            ->then(MapElements::via(function (Command $command) use ($categorySavedEvent) {
+                return $command->withTimestamp($categorySavedEvent->getTimestamp());
             }))
-        );
+            ->applyTo([Kv::of('current', $currentData), Kv::of('previous', $previousData)]);
+    }
 
-        return $getMoveCategoryCommands->applyTo([
-            Kv::of('previous', $previousParentCodes),
-            Kv::of('current', $currentParentCodes),
-        ]);
+    public function transformAkeneoDeletedEventToMagentoDeleteCommands($categoryDeletedEvent): \Iterator
+    {
+        $categoryDeletedEvent = $this->resolveEntityDeletedEvent($categoryDeletedEvent);
+
+        return $this->dataTransform
+            ->then(CreateDeleteCategoryCommands::fromCategoryData())
+            ->then(MapElements::via(function (Command $command) use ($categoryDeletedEvent) {
+                return $command->withTimestamp($categoryDeletedEvent->getTimestamp());
+            }))
+            ->applyTo([$categoryDeletedEvent->getPreviousEntityData()]);
     }
 
     protected function resolveEntitySavedEvent($event): EntityStateEvent
