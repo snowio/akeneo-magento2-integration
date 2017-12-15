@@ -17,7 +17,7 @@ final class AttributeOptionMapper extends DataMapper
         return Magento2AttributeOption::of(
             $attributeOption->getAttributeCode(),
             $attributeOption->getOptionCode(),
-            $attributeOption->getLabel($this->defaultLocale)
+            $attributeOption->getLabel($this->defaultLocale) ?? $attributeOption->getOptionCode()
         );
     }
 

@@ -19,7 +19,7 @@ final class AttributeMapper extends DataMapper
     public function __invoke(AkeneoAttributeData $attributeData): Magento2AttributeData
     {
         $frontendInput = ($this->typeToFrontendInputMapper)($attributeData->getType());
-        $defaultFrontendLabel = $attributeData->getLabel($this->defaultLocale);
+        $defaultFrontendLabel = $attributeData->getLabel($this->defaultLocale) ?? $attributeData->getCode();
         return Magento2AttributeData::of($attributeData->getCode(), $frontendInput, $defaultFrontendLabel);
     }
 
