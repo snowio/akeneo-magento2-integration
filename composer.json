@@ -2,7 +2,7 @@
     "name": "snowio/akeneo-magento2-integration",
     "require": {
         "snowio/akeneo-data-model": "^0.1.11",
-        "snowio/magento2-data-model": "^0.4.0",
+        "snowio/magento2-data-model": "^0.5.0",
         "joshdifabio/transform": "^0.1"
     },
     "require-dev": {
